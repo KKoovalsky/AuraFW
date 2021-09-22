@@ -12,3 +12,6 @@ set(CMAKE_CXX_EXTENSIONS ON)
 
 include(../cmake/dependencies.cmake)
 
+
+enable_testing()
+add_subdirectory(../tests/host tests/host)
