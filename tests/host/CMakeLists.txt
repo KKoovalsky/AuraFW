@@ -4,6 +4,7 @@
 function(CreateHostTests)
 
     add_executable(aura_host_tests
+        test_measurement_scheduler.cpp 
     )
     target_link_libraries(aura_host_tests PRIVATE aura_common Catch2::Catch2WithMain)
     
