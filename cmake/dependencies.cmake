@@ -18,7 +18,7 @@ function(ProvideLlvm)
 
     Include(FetchContent)
 
-    set(COMMON_DEPENDENCIES_PATH ${CMAKE_BINARY_DIR}/../common_dependencies)
+    set(COMMON_DEPENDENCIES_PATH ${CMAKE_SOURCE_DIR}/build/common_dependencies)
 
     FetchContent_Declare(
         Llvm
