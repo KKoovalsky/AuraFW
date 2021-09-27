@@ -7,7 +7,7 @@ macro(EnableClangStaticAnalysis)
             # 'Build myself' by taking the main CMakeLists.txt
             --build-and-test ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR}/clang_static_analysis
             # This is a hack: effectively, will skip the Build stage by not performing implicit clean, but
-            # we invoke it anyway. We could leave '--build-noclean', but then 'clean' would be called twice.
+            # we invoke it anyway. We could not use '--build-noclean', but then 'clean' would be called twice.
             --build-noclean
             --build-target clean
             --build-generator ${CMAKE_GENERATOR}
