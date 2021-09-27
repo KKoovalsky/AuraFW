@@ -7,6 +7,9 @@ function(ProvideCatch2)
       GIT_REPOSITORY https://github.com/catchorg/Catch2.git
       GIT_TAG        efd8cc8777406457a34e15313076ac3a77d4e54b)
 
+    # TODO: PREFIX, subbuild and src (expect build) can be the same for host and the device build. We need to check out
+    # what is subbuild and whether it is system dependent. See how is PREFIX, SUBBUILD_DIR, ... used in ProvideLlvm()
+
     FetchContent_MakeAvailable(Catch2)
 
 endfunction()
