@@ -13,7 +13,12 @@ macro(EnableClangStaticAnalysis)
             --build-generator ${CMAKE_GENERATOR}
             # scan-build needs Debug configuration
             --build-options -DCMAKE_BUILD_TYPE=Debug
-            --test-command ${LLVM_TOOLCHAIN_PATH}/bin/scan-build -v -v -o reports ${CMAKE_COMMAND} --build .
+            --test-command 
+                ${LLVM_TOOLCHAIN_PATH}/bin/scan-build 
+                    -v -v -o reports 
+                    -enable-checker optin.cplusplus.UninitializedObject 
+                    -enable-checker optin.cplusplus.VirtualCall
+                    ${CMAKE_COMMAND} --build .
     )
 
 endmacro()
