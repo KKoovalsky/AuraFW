@@ -33,4 +33,28 @@ macro(EnableClangStaticAnalysis)
 
 endmacro()
 
+function(FindAndEnableCppCheckOrFailIfNotFound)
+
+    find_program(CPPCHECK NAMES cppcheck)
+    if(NOT CPPCHECK)
+        message(WARNING "cppcheck not found! Please, install it to enable static analysis")
+        return()
+    endif()
+
+    add_test(
+        NAME cppcheck_static_analysis
+        COMMAND ${CPPCHECK} 
+            --project=${CMAKE_BINARY_DIR}/compile_commands.json
+            --enable=warning
+            --enable=style
+            --enable=performance
+            --enable=unusedFunction
+            -i${CMAKE_BINARY_DIR}/_deps
+            --suppress=preprocessorErrorDirective:*catch2/*
+            --error-exitcode=1
+    )
+
+endfunction()
+
 EnableClangStaticAnalysis()
+FindAndEnableCppCheckOrFailIfNotFound()
