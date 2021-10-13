@@ -19,19 +19,19 @@ struct MeasurementMock
 
 struct MeasurerMock : Measurer<MeasurementMock>
 {
-    virtual MeasurementMock measure() override
+    MeasurementMock measure() override
     {
         measured_times++;
         return measurement;
     }
 
     unsigned measured_times{0};
-    MeasurementMock measurement;
+    MeasurementMock measurement{};
 };
 
 struct PublisherMock : Publisher<MeasurementMock>
 {
-    virtual void publish(MultipleMeasurements measurements) override
+    void publish(MultipleMeasurements measurements) override
     {
         published_times++;
         published_measurements.push_back(measurements);
@@ -43,14 +43,14 @@ struct PublisherMock : Publisher<MeasurementMock>
 
 struct PeriodicalTimerMock : PeriodicalTimer
 {
-    virtual void start(std::chrono::seconds period, PeriodicalCallback callback) override
+    void start(std::chrono::seconds timer_period, PeriodicalCallback callback) override
     {
-        this->period = period;
+        this->period = timer_period;
         periodical_callback = callback;
     }
 
     PeriodicalCallback periodical_callback;
-    std::chrono::seconds period;
+    std::chrono::seconds period{};
 };
 
 bool operator!=(const MeasurementMock& l, const MeasurementMock& r)

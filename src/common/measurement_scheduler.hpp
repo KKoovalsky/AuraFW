@@ -64,13 +64,13 @@ class MeasurementScheduler
         throw_if_measurement_interval_higher_than_publishing_interval();
         reserve_space_for_measurements();
 
-        measurement_interval_timer.start(this->measurement_interval, [this]() {
+        this->measurement_interval_timer.start(this->measurement_interval, [this]() {
             // TODO: mutex here
             auto measurement{this->measurer.measure()};
             collected_measurements.emplace_back(std::move(measurement));
         });
 
-        publishing_interval_timer.start(this->publishing_interval, [this]() {
+        this->publishing_interval_timer.start(this->publishing_interval, [this]() {
             this->publisher.publish(std::move(collected_measurements));
             reserve_space_for_measurements();
         });
@@ -79,11 +79,11 @@ class MeasurementScheduler
   private:
     struct Error : std::exception
     {
-        Error(std::string message) : message{std::move(message)}
+        explicit Error(std::string message) : message{std::move(message)}
         {
         }
 
-        virtual const char* what() const noexcept
+        [[nodiscard]] const char* what() const noexcept override
         {
             return message.c_str();
         }
