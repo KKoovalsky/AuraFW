@@ -33,7 +33,7 @@ macro(EnableClangStaticAnalysis)
 
 endmacro()
 
-function(FindAndEnableCppCheckOrFailIfNotFound)
+function(FindAndEnableCppCheckOrWarnIfNotFound)
 
     find_program(CPPCHECK NAMES cppcheck)
     if(NOT CPPCHECK)
@@ -57,4 +57,4 @@ function(FindAndEnableCppCheckOrFailIfNotFound)
 endfunction()
 
 EnableClangStaticAnalysis()
-FindAndEnableCppCheckOrFailIfNotFound()
+FindAndEnableCppCheckOrWarnIfNotFound()
