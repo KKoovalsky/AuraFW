@@ -56,5 +56,34 @@ function(FindAndEnableCppCheckOrWarnIfNotFound)
 
 endfunction()
 
+function(FindAndEnableClangTidyOrWarnIfNotFound)
+
+    set(llvm_toolchain_bin_path ${LLVM_TOOLCHAIN_PATH}/bin/)
+
+    find_program(CLANG_TIDY NAMES clang-tidy HINTS ${llvm_toolchain_bin_path})
+    find_program(CLANG_APPLY_REPLACEMENTS NAMES clang-apply-replacements HINTS ${llvm_toolchain_bin_path})
+    find_program(RUN_CLANG_TIDY NAMES run-clang-tidy HINTS ${llvm_toolchain_bin_path})
+
+    if(NOT CLANG_TIDY OR NOT CLANG_APPLY_REPLACEMENTS OR NOT RUN_CLANG_TIDY)
+        message(WARNING " One of clang-tidy programs not found: "
+                        " ${CLANG_TIDY} ${CLANG_APPLY_REPLACEMENTS} ${RUN_CLANG_TIDY}. "
+                        " clang-tidy linting is disabled.")
+        return()
+    endif()
+
+
+    set(project_sources_regex "(^${PROJECT_ROOT_DIR}/src.*)|(^${PROJECT_ROOT_DIR}/tests.*)")
+    add_test(
+        NAME clang_tidy_static_analysis
+        COMMAND ${RUN_CLANG_TIDY}
+            -clang-tidy-binary ${CLANG_TIDY}
+            -clang-apply-replacements-binary ${CLANG_APPLY_REPLACEMENTS}
+            files ${project_sources_regex}
+            -header-filter ${project_sources_regex}
+    )
+
+endfunction()
+
 EnableClangStaticAnalysis()
 FindAndEnableCppCheckOrWarnIfNotFound()
+FindAndEnableClangTidyOrWarnIfNotFound()

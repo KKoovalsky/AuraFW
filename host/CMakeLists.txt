@@ -15,6 +15,9 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
+file(REAL_PATH ${CMAKE_SOURCE_DIR}/../ PROJECT_ROOT_DIR)
+message(STATUS "PROJECT_ROOT_DIR: ${PROJECT_ROOT_DIR}")
+
 include(../cmake/utilities.cmake)
 
 add_subdirectory(../src/common src/common)
