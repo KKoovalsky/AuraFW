@@ -1,8 +1,8 @@
 function(EnableClangStaticAnalysis)
 
-    find_program(SCAN_BUILD NAMES scan-build HINTS ${LLVM_TOOLCHAIN_PATH}/bin/scan-build)
+    find_program(scan_build NAMES scan-build HINTS ${LLVM_TOOLCHAIN_PATH}/bin/scan-build)
 
-    if(NOT SCAN_BUILD)
+    if(NOT scan_build)
         message(WARNING " scan-build not found! Clang static analysis will be disabled.")
         return()
     endif()
@@ -20,8 +20,8 @@ function(EnableClangStaticAnalysis)
     # Runs the analysis from the path created specifically for that task
     add_custom_target(clang_static_analysis
         # scan-build wants Debug build, for better analysis.
-        COMMAND ${SCAN_BUILD} ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} -DCMAKE_BUILD_TYPE=Debug
-        COMMAND ${SCAN_BUILD}
+        COMMAND ${scan_build} ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} -DCMAKE_BUILD_TYPE=Debug
+        COMMAND ${scan_build}
                     -v -v -o ${reports_path} 
                     -enable-checker optin.cplusplus.UninitializedObject 
                     -enable-checker optin.cplusplus.VirtualCall
@@ -41,15 +41,15 @@ endfunction()
 
 function(FindAndEnableCppCheckOrWarnIfNotFound)
 
-    find_program(CPPCHECK NAMES cppcheck)
-    if(NOT CPPCHECK)
+    find_program(cppcheck NAMES cppcheck)
+    if(NOT cppcheck)
         message(WARNING "cppcheck not found! Please, install it to enable static analysis")
         return()
     endif()
 
     add_test(
         NAME cppcheck_static_analysis
-        COMMAND ${CPPCHECK} 
+        COMMAND ${cppcheck}
             --project=${CMAKE_BINARY_DIR}/compile_commands.json
             --enable=warning
             --enable=style
@@ -66,13 +66,13 @@ function(FindAndEnableClangTidyOrWarnIfNotFound)
 
     set(llvm_toolchain_bin_path ${LLVM_TOOLCHAIN_PATH}/bin/)
 
-    find_program(CLANG_TIDY NAMES clang-tidy HINTS ${llvm_toolchain_bin_path})
-    find_program(CLANG_APPLY_REPLACEMENTS NAMES clang-apply-replacements HINTS ${llvm_toolchain_bin_path})
-    find_program(RUN_CLANG_TIDY NAMES run-clang-tidy HINTS ${llvm_toolchain_bin_path})
+    find_program(clang_tidy NAMES clang-tidy HINTS ${llvm_toolchain_bin_path})
+    find_program(clang_apply_replacements NAMES clang-apply-replacements HINTS ${llvm_toolchain_bin_path})
+    find_program(run_clang_tidy NAMES run-clang-tidy HINTS ${llvm_toolchain_bin_path})
 
-    if(NOT CLANG_TIDY OR NOT CLANG_APPLY_REPLACEMENTS OR NOT RUN_CLANG_TIDY)
+    if(NOT clang_tidy OR NOT clang_apply_replacements OR NOT run_clang_tidy)
         message(WARNING " One of clang-tidy programs not found: "
-                        " ${CLANG_TIDY} ${CLANG_APPLY_REPLACEMENTS} ${RUN_CLANG_TIDY}. "
+                        " ${clang_tidy} ${clang_apply_replacements} ${run_clang_tidy}. "
                         " clang-tidy linting is disabled.")
         return()
     endif()
@@ -81,9 +81,9 @@ function(FindAndEnableClangTidyOrWarnIfNotFound)
     set(project_sources_regex "(^${PROJECT_ROOT_DIR}/src.*)|(^${PROJECT_ROOT_DIR}/tests.*)")
     add_test(
         NAME clang_tidy_static_analysis
-        COMMAND ${RUN_CLANG_TIDY}
-            -clang-tidy-binary ${CLANG_TIDY}
-            -clang-apply-replacements-binary ${CLANG_APPLY_REPLACEMENTS}
+        COMMAND ${run_clang_tidy}
+            -clang-tidy-binary ${clang_tidy}
+            -clang-apply-replacements-binary ${clang_apply_replacements}
             files ${project_sources_regex}
             -header-filter ${project_sources_regex}
     )
