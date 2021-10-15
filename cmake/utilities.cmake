@@ -1,7 +1,13 @@
-macro(EnableClangStaticAnalysis)
+function(EnableClangStaticAnalysis)
+
+    find_program(SCAN_BUILD NAMES scan-build HINTS ${LLVM_TOOLCHAIN_PATH}/bin/scan-build)
+
+    if(NOT SCAN_BUILD)
+        message(WARNING " scan-build not found! Clang static analysis will be disabled.")
+        return()
+    endif()
 
     set(on_side_build_path ${CMAKE_BINARY_DIR}/clang_static_analysis)
-    set(scan_build_path ${LLVM_TOOLCHAIN_PATH}/bin/scan-build)
     set(reports_path ${CMAKE_BINARY_DIR}/clang_static_analysis_reports)
 
     # Creates clean directory where the analysis will be built.
@@ -14,8 +20,8 @@ macro(EnableClangStaticAnalysis)
     # Runs the analysis from the path created specifically for that task
     add_custom_target(clang_static_analysis
         # scan-build wants Debug build, for better analysis.
-        COMMAND ${scan_build_path} ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} -DCMAKE_BUILD_TYPE=Debug
-        COMMAND ${scan_build_path}
+        COMMAND ${SCAN_BUILD} ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} -DCMAKE_BUILD_TYPE=Debug
+        COMMAND ${SCAN_BUILD}
                     -v -v -o ${reports_path} 
                     -enable-checker optin.cplusplus.UninitializedObject 
                     -enable-checker optin.cplusplus.VirtualCall
@@ -31,7 +37,7 @@ macro(EnableClangStaticAnalysis)
         COMMAND ${CMAKE_COMMAND} --build . --target clang_static_analysis
     )
 
-endmacro()
+endfunction()
 
 function(FindAndEnableCppCheckOrWarnIfNotFound)
 
