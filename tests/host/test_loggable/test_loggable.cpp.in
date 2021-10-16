@@ -1,0 +1,20 @@
+#include "loggable.hpp"
+
+#include "@FILE_WITH_LOGGABLE_CLASS_DEFINITION@"
+
+template<typename Logger>
+requires Loggable<Logger>
+struct LoggableTest
+{
+    explicit LoggableTest(Logger& logger)
+    {
+        logger.log(LogLevel::error);
+    }
+};
+
+int main()
+{
+    Logger logger;
+    LoggableTest loggable_test{logger};
+    return 0;
+}
