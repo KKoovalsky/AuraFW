@@ -2,11 +2,9 @@
 
 #include "@FILE_WITH_LOGGABLE_CLASS_DEFINITION@"
 
-template<typename Logger>
-requires Loggable<Logger>
 struct LoggableTest
 {
-    explicit LoggableTest(Logger& logger)
+    explicit LoggableTest(Loggable auto& logger)
     {
         logger.log(LogLevel::error);
     }

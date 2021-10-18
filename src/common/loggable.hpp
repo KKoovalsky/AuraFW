@@ -17,23 +17,32 @@ enum class LogLevel
 };
 
 template<typename T>
-concept WeaklyLoggable = requires(T v)
+concept HasLogMethodReturningReferenceToSelf = requires(T v)
 {
     {
         v.log(LogLevel{})
         } -> std::convertible_to<T&>;
 };
 
-template<WeaklyLoggable T, class U>
+//! Disallows implicit cast of basic types, allowing only string-literals and string-like to std::string implicit cast.
+template<HasLogMethodReturningReferenceToSelf T, class U>
 requires(!std::convertible_to<U, std::string>) auto operator<<(T, U) = delete;
 
 template<typename T>
-concept Loggable = WeaklyLoggable<T> && requires(T v)
+concept HasOutputStreamOperatorOverloadsForBasicTypes =
+    requires(T v, unsigned unsigned_, int int_, float float_, unsigned char unsigned_char_, char char_)
 {
     {
-        v << "log message" << static_cast<unsigned>(0) << static_cast<int>(0) << static_cast<float>(0.0)
-          << static_cast<unsigned char>(0) << static_cast<char>('0')
+        v << "string literal" //
+          << unsigned_        //
+          << int_             //
+          << float_           //
+          << unsigned_char_   //
+          << char_            //
         } -> std::convertible_to<T&>;
 };
+
+template<typename T>
+concept Loggable = HasLogMethodReturningReferenceToSelf<T> && HasOutputStreamOperatorOverloadsForBasicTypes<T>;
 
 #endif /* LOGGABLE_HPP */
