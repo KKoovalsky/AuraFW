@@ -67,25 +67,27 @@ TEST_CASE("Measurements are scheduled for collecting and publishing. According t
     PeriodicalTimerMock measuring_interval_timer;
     PeriodicalTimerMock publishing_interval_timer;
 
+    auto make_measurement_scheduler{
+        [&](MeasurementIntervalInSeconds measurement_interval, PublishingIntervalInSeconds publishing_interval) {
+            return MeasurementSchedulerUnderTest{measurement_interval,
+                                                 publishing_interval,
+                                                 measurer,
+                                                 publisher,
+                                                 measuring_interval_timer,
+                                                 publishing_interval_timer};
+        }};
+
     SECTION("No measurement is collected before measurement interval has passed")
     {
-        MeasurementSchedulerUnderTest scheduler{MeasurementIntervalInSeconds(1),
-                                                PublishingIntervalInSeconds(2),
-                                                measurer,
-                                                publisher,
-                                                measuring_interval_timer,
-                                                publishing_interval_timer};
+        [[maybe_unused]] auto scheduler{
+            make_measurement_scheduler(MeasurementIntervalInSeconds(1), PublishingIntervalInSeconds(2))};
         REQUIRE(measurer.measured_times == 0);
     }
 
     SECTION("On each Measurement Interval Measurements are collected")
     {
-        MeasurementSchedulerUnderTest scheduler{MeasurementIntervalInSeconds(1),
-                                                PublishingIntervalInSeconds(2),
-                                                measurer,
-                                                publisher,
-                                                measuring_interval_timer,
-                                                publishing_interval_timer};
+        [[maybe_unused]] auto scheduler{
+            make_measurement_scheduler(MeasurementIntervalInSeconds{1}, PublishingIntervalInSeconds{2})};
         measuring_interval_timer.periodical_callback();
         measuring_interval_timer.periodical_callback();
         REQUIRE(measurer.measured_times == 2);
@@ -93,23 +95,15 @@ TEST_CASE("Measurements are scheduled for collecting and publishing. According t
 
     SECTION("No measurement is published before publishing interval has passed")
     {
-        MeasurementSchedulerUnderTest scheduler{MeasurementIntervalInSeconds(1),
-                                                PublishingIntervalInSeconds(2),
-                                                measurer,
-                                                publisher,
-                                                measuring_interval_timer,
-                                                publishing_interval_timer};
+        [[maybe_unused]] auto scheduler{
+            make_measurement_scheduler(MeasurementIntervalInSeconds{1}, PublishingIntervalInSeconds{2})};
         REQUIRE(publisher.published_times == 0);
     }
 
     SECTION("On each Publishing Interval Measurements are published")
     {
-        MeasurementSchedulerUnderTest scheduler{MeasurementIntervalInSeconds(1),
-                                                PublishingIntervalInSeconds(2),
-                                                measurer,
-                                                publisher,
-                                                measuring_interval_timer,
-                                                publishing_interval_timer};
+        [[maybe_unused]] auto scheduler{
+            make_measurement_scheduler(MeasurementIntervalInSeconds{1}, PublishingIntervalInSeconds{2})};
         publishing_interval_timer.periodical_callback();
         publishing_interval_timer.periodical_callback();
         REQUIRE(publisher.published_times == 2);
@@ -117,12 +111,8 @@ TEST_CASE("Measurements are scheduled for collecting and publishing. According t
 
     SECTION("All the collected Measurements are published ...")
     {
-        MeasurementSchedulerUnderTest scheduler{MeasurementIntervalInSeconds(1),
-                                                PublishingIntervalInSeconds(2),
-                                                measurer,
-                                                publisher,
-                                                measuring_interval_timer,
-                                                publishing_interval_timer};
+        [[maybe_unused]] auto scheduler{
+            make_measurement_scheduler(MeasurementIntervalInSeconds{1}, PublishingIntervalInSeconds{2})};
 
         SECTION(" ... on first Publishing Interval")
         {
@@ -156,12 +146,7 @@ TEST_CASE("Measurements are scheduled for collecting and publishing. According t
     SECTION("Measurement Interval higher than Publishing Interval is an error")
     {
         auto create_measurement_scheduler_with_wrong_intervals{[&]() {
-            MeasurementSchedulerUnderTest scheduler{MeasurementIntervalInSeconds(3),
-                                                    PublishingIntervalInSeconds(2),
-                                                    measurer,
-                                                    publisher,
-                                                    measuring_interval_timer,
-                                                    publishing_interval_timer};
+            make_measurement_scheduler(MeasurementIntervalInSeconds{3}, PublishingIntervalInSeconds{2});
         }};
         REQUIRE_THROWS_WITH(create_measurement_scheduler_with_wrong_intervals(),
                             "Measurement Interval cannot be higher than Publishing Interval");
@@ -170,12 +155,7 @@ TEST_CASE("Measurements are scheduled for collecting and publishing. According t
     SECTION("Measurement Interval equal to Publishing Interval is not an error")
     {
         auto create_measurement_scheduler_with_intervals_equal{[&]() {
-            MeasurementSchedulerUnderTest scheduler{MeasurementIntervalInSeconds(100),
-                                                    PublishingIntervalInSeconds(100),
-                                                    measurer,
-                                                    publisher,
-                                                    measuring_interval_timer,
-                                                    publishing_interval_timer};
+            make_measurement_scheduler(MeasurementIntervalInSeconds{100}, PublishingIntervalInSeconds{100});
         }};
         REQUIRE_NOTHROW(create_measurement_scheduler_with_intervals_equal());
     }
@@ -183,12 +163,8 @@ TEST_CASE("Measurements are scheduled for collecting and publishing. According t
     SECTION("No measurements to publish is not an error")
     {
         auto call_publishing_interval_before_measurement_interval{[&]() {
-            MeasurementSchedulerUnderTest scheduler{MeasurementIntervalInSeconds(3),
-                                                    PublishingIntervalInSeconds(7),
-                                                    measurer,
-                                                    publisher,
-                                                    measuring_interval_timer,
-                                                    publishing_interval_timer};
+            [[maybe_unused]] auto scheduler{
+                make_measurement_scheduler(MeasurementIntervalInSeconds{3}, PublishingIntervalInSeconds{7})};
             publishing_interval_timer.periodical_callback();
         }};
         REQUIRE_NOTHROW(call_publishing_interval_before_measurement_interval());
@@ -196,23 +172,15 @@ TEST_CASE("Measurements are scheduled for collecting and publishing. According t
 
     SECTION("Proper timeout is set for Measurement Interval timer")
     {
-        MeasurementSchedulerUnderTest scheduler{MeasurementIntervalInSeconds(30),
-                                                PublishingIntervalInSeconds(70),
-                                                measurer,
-                                                publisher,
-                                                measuring_interval_timer,
-                                                publishing_interval_timer};
+        [[maybe_unused]] auto scheduler{
+            make_measurement_scheduler(MeasurementIntervalInSeconds{30}, PublishingIntervalInSeconds{70})};
         REQUIRE(measuring_interval_timer.period == std::chrono::seconds(30));
     }
 
     SECTION("Proper timeout is set for Publishing Interval timer")
     {
-        MeasurementSchedulerUnderTest scheduler{MeasurementIntervalInSeconds(30),
-                                                PublishingIntervalInSeconds(70),
-                                                measurer,
-                                                publisher,
-                                                measuring_interval_timer,
-                                                publishing_interval_timer};
+        [[maybe_unused]] auto scheduler{
+            make_measurement_scheduler(MeasurementIntervalInSeconds{30}, PublishingIntervalInSeconds{70})};
         REQUIRE(publishing_interval_timer.period == std::chrono::seconds(70));
     }
 }
