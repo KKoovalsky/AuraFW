@@ -37,6 +37,8 @@ function(EnableClangStaticAnalysis)
         COMMAND ${CMAKE_COMMAND} --build . --target clang_static_analysis
     )
 
+    set_tests_properties(clang_static_analysis PROPERTIES LABELS StaticCodeAnalysis)
+
 endfunction()
 
 function(FindAndEnableCppCheckOrWarnIfNotFound)
@@ -59,6 +61,8 @@ function(FindAndEnableCppCheckOrWarnIfNotFound)
             --suppress=preprocessorErrorDirective:*catch2/*
             --error-exitcode=1
     )
+
+    set_tests_properties(cppcheck_static_analysis PROPERTIES LABELS StaticCodeAnalysis)
 
 endfunction()
 
@@ -87,6 +91,8 @@ function(FindAndEnableClangTidyOrWarnIfNotFound)
             files ${project_sources_regex}
             -header-filter ${project_sources_regex}
     )
+
+    set_tests_properties(clang_tidy_static_analysis PROPERTIES LABELS StaticCodeAnalysis)
 
 endfunction()
 
