@@ -68,20 +68,27 @@ class MeasurementScheduler
         reserve_space_for_measurements();
 
         this->measurement_interval_timer.start(this->measurement_interval, [this]() {
-            // TODO: mutex here
-            auto measurement{this->measurer.measure()};
-            collected_measurements.emplace_back(std::move(measurement));
+            try
+            {
+                // TODO: mutex here
+                auto measurement{this->measurer.measure()};
+                collected_measurements.emplace_back(std::move(measurement));
+            } catch (const typename MeasurerBridge::Error& error)
+            {
+                this->logger.log(LogLevel::error) << "Measurer: " << error.what();
+            }
         });
 
         this->publishing_interval_timer.start(this->publishing_interval, [this]() {
             try
             {
+                // TODO: mutex here
                 this->publisher.publish(std::move(collected_measurements));
+                reserve_space_for_measurements();
             } catch (const typename PublisherBridge::Error& error)
             {
                 this->logger.log(LogLevel::error) << "Publisher: " << error.what();
             }
-            reserve_space_for_measurements();
         });
     }
 

@@ -6,6 +6,7 @@
 #ifndef PUBLISHER_HPP
 #define PUBLISHER_HPP
 
+#include <exception>
 #include <vector>
 
 template<typename Measurement>
@@ -17,7 +18,8 @@ struct Publisher
     virtual ~Publisher() = default;
 
     struct Error : std::exception
-    {};
+    {
+    };
 };
 
 #endif /* PUBLISHER_HPP */

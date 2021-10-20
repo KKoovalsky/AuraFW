@@ -22,12 +22,32 @@ struct MeasurerMock : Measurer<MeasurementMock>
 {
     MeasurementMock measure() override
     {
+        if (error.has_value())
+        {
+            throw *error;
+        }
+
         measured_times++;
         return measurement;
     }
 
+    struct Error : Measurer<MeasurementMock>::Error
+    {
+        explicit Error(std::string message) : message{std::move(message)}
+        {
+        }
+
+        [[nodiscard]] const char* what() const noexcept override
+        {
+            return message.c_str();
+        }
+
+        std::string message;
+    };
+
     unsigned measured_times{0};
     MeasurementMock measurement{};
+    std::optional<Error> error;
 };
 
 struct PublisherMock : Publisher<MeasurementMock>
@@ -241,5 +261,10 @@ TEST_CASE("Measurements are scheduled for collecting and publishing. According t
 
     SECTION("Error is logged on Measurer error")
     {
+        auto scheduler{make_default_measurement_scheduler()};
+        measurer.error = MeasurerMock::Error{"just testing!"};
+        measuring_interval_timer.periodical_callback();
+        REQUIRE_THAT(logger.error_messages,
+                     Catch::Matchers::Equals(std::vector<std::string>{"Measurer: ", "just testing!"}));
     }
 }
