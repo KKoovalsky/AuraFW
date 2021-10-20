@@ -133,15 +133,13 @@ TEST_CASE("Measurements are scheduled for collecting and publishing. According t
 
     SECTION("No measurement is collected before measurement interval has passed")
     {
-        [[maybe_unused]] auto scheduler{
-            make_measurement_scheduler(MeasurementIntervalInSeconds(1), PublishingIntervalInSeconds(2))};
+        auto scheduler{make_measurement_scheduler(MeasurementIntervalInSeconds(1), PublishingIntervalInSeconds(2))};
         REQUIRE(measurer.measured_times == 0);
     }
 
     SECTION("On each Measurement Interval Measurements are collected")
     {
-        [[maybe_unused]] auto scheduler{
-            make_measurement_scheduler(MeasurementIntervalInSeconds{1}, PublishingIntervalInSeconds{2})};
+        auto scheduler{make_measurement_scheduler(MeasurementIntervalInSeconds{1}, PublishingIntervalInSeconds{2})};
         measuring_interval_timer.periodical_callback();
         measuring_interval_timer.periodical_callback();
         REQUIRE(measurer.measured_times == 2);
@@ -149,15 +147,13 @@ TEST_CASE("Measurements are scheduled for collecting and publishing. According t
 
     SECTION("No measurement is published before publishing interval has passed")
     {
-        [[maybe_unused]] auto scheduler{
-            make_measurement_scheduler(MeasurementIntervalInSeconds{1}, PublishingIntervalInSeconds{2})};
+        auto scheduler{make_measurement_scheduler(MeasurementIntervalInSeconds{1}, PublishingIntervalInSeconds{2})};
         REQUIRE(publisher.published_times == 0);
     }
 
     SECTION("On each Publishing Interval Measurements are published")
     {
-        [[maybe_unused]] auto scheduler{
-            make_measurement_scheduler(MeasurementIntervalInSeconds{1}, PublishingIntervalInSeconds{2})};
+        auto scheduler{make_measurement_scheduler(MeasurementIntervalInSeconds{1}, PublishingIntervalInSeconds{2})};
         publishing_interval_timer.periodical_callback();
         publishing_interval_timer.periodical_callback();
         REQUIRE(publisher.published_times == 2);
@@ -165,8 +161,7 @@ TEST_CASE("Measurements are scheduled for collecting and publishing. According t
 
     SECTION("All the collected Measurements are published ...")
     {
-        [[maybe_unused]] auto scheduler{
-            make_measurement_scheduler(MeasurementIntervalInSeconds{1}, PublishingIntervalInSeconds{2})};
+        auto scheduler{make_measurement_scheduler(MeasurementIntervalInSeconds{1}, PublishingIntervalInSeconds{2})};
 
         SECTION(" ... on first Publishing Interval")
         {
@@ -217,8 +212,7 @@ TEST_CASE("Measurements are scheduled for collecting and publishing. According t
     SECTION("No measurements to publish is not an error")
     {
         auto call_publishing_interval_before_measurement_interval{[&]() {
-            [[maybe_unused]] auto scheduler{
-                make_measurement_scheduler(MeasurementIntervalInSeconds{3}, PublishingIntervalInSeconds{7})};
+            auto scheduler{make_measurement_scheduler(MeasurementIntervalInSeconds{3}, PublishingIntervalInSeconds{7})};
             publishing_interval_timer.periodical_callback();
         }};
         REQUIRE_NOTHROW(call_publishing_interval_before_measurement_interval());
@@ -226,15 +220,13 @@ TEST_CASE("Measurements are scheduled for collecting and publishing. According t
 
     SECTION("Proper timeout is set for Measurement Interval timer")
     {
-        [[maybe_unused]] auto scheduler{
-            make_measurement_scheduler(MeasurementIntervalInSeconds{30}, PublishingIntervalInSeconds{70})};
+        auto scheduler{make_measurement_scheduler(MeasurementIntervalInSeconds{30}, PublishingIntervalInSeconds{70})};
         REQUIRE(measuring_interval_timer.period == std::chrono::seconds(30));
     }
 
     SECTION("Proper timeout is set for Publishing Interval timer")
     {
-        [[maybe_unused]] auto scheduler{
-            make_measurement_scheduler(MeasurementIntervalInSeconds{30}, PublishingIntervalInSeconds{70})};
+        auto scheduler{make_measurement_scheduler(MeasurementIntervalInSeconds{30}, PublishingIntervalInSeconds{70})};
         REQUIRE(publishing_interval_timer.period == std::chrono::seconds(70));
     }
 
