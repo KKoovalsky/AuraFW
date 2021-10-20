@@ -120,7 +120,7 @@ bool operator!=(const MeasurementMock& l, const MeasurementMock& r)
     return l.id != r.id;
 }
 
-TEST_CASE("Measurements are scheduled for collecting and publishing. According to requirements: OP",
+TEST_CASE("Measurements are scheduled for collecting and publishing. According to requirements [OP]",
           "[measurement_scheduler]")
 {
     using MeasurementSchedulerUnderTest = MeasurementScheduler<MeasurementMock, LoggerMock>;
