@@ -17,5 +17,3 @@ endfunction()
 
 ProvideCatch2()
 CreateHostTests()
-
-add_subdirectory(test_loggable)
