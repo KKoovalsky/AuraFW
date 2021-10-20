@@ -6,6 +6,7 @@
 #ifndef MEASUREMENT_SCHEDULER_HPP
 #define MEASUREMENT_SCHEDULER_HPP
 
+#include "loggable.hpp"
 #include "measurer.hpp"
 #include "periodical_timer.hpp"
 #include "publisher.hpp"
@@ -41,7 +42,7 @@ struct PublishingIntervalInSeconds : detail::UnsignedInteger
     }
 };
 
-template<typename Measurement>
+template<typename Measurement, typename Logger>
 class MeasurementScheduler
 {
   public:
@@ -53,13 +54,15 @@ class MeasurementScheduler
                                   MeasurerBridge& measurer,
                                   PublisherBridge& publisher,
                                   PeriodicalTimer& measurement_interval_timer,
-                                  PeriodicalTimer& publishing_interval_timer) :
+                                  PeriodicalTimer& publishing_interval_timer,
+                                  Loggable auto& logger) :
         measurement_interval{std::chrono::seconds(measurement_interval.value)},
         publishing_interval{std::chrono::seconds(publishing_interval.value)},
         measurer{measurer},
         publisher{publisher},
         measurement_interval_timer{measurement_interval_timer},
-        publishing_interval_timer{publishing_interval_timer}
+        publishing_interval_timer{publishing_interval_timer},
+        logger{logger}
     {
         throw_if_measurement_interval_higher_than_publishing_interval();
         reserve_space_for_measurements();
@@ -71,7 +74,13 @@ class MeasurementScheduler
         });
 
         this->publishing_interval_timer.start(this->publishing_interval, [this]() {
-            this->publisher.publish(std::move(collected_measurements));
+            try
+            {
+                this->publisher.publish(std::move(collected_measurements));
+            } catch (const typename PublisherBridge::Error& error)
+            {
+                this->logger.log(LogLevel::error) << "Publisher: " << error.what();
+            }
             reserve_space_for_measurements();
         });
     }
@@ -112,6 +121,7 @@ class MeasurementScheduler
     PublisherBridge& publisher;
     PeriodicalTimer& measurement_interval_timer;
     PeriodicalTimer& publishing_interval_timer;
+    Logger& logger;
 
     std::vector<Measurement> collected_measurements;
 };

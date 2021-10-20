@@ -15,6 +15,9 @@ struct Publisher
 
     virtual void publish(MultipleMeasurements) = 0;
     virtual ~Publisher() = default;
+
+    struct Error : std::exception
+    {};
 };
 
 #endif /* PUBLISHER_HPP */

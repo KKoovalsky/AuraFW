@@ -8,6 +8,7 @@
 
 #include <chrono>
 #include <list>
+#include <vector>
 
 #include "catch2/matchers/catch_matchers_string.hpp"
 #include "measurement_scheduler.hpp"
@@ -33,12 +34,31 @@ struct PublisherMock : Publisher<MeasurementMock>
 {
     void publish(MultipleMeasurements measurements) override
     {
+        if (error.has_value())
+        {
+            throw *error;
+        }
         published_times++;
         published_measurements.push_back(measurements);
     }
 
+    struct Error : Publisher<MeasurementMock>::Error
+    {
+        explicit Error(std::string message) : message{std::move(message)}
+        {
+        }
+
+        [[nodiscard]] const char* what() const noexcept override
+        {
+            return message.c_str();
+        }
+
+        std::string message;
+    };
+
     unsigned published_times{0};
     std::list<MultipleMeasurements> published_measurements;
+    std::optional<Error> error;
 };
 
 struct PeriodicalTimerMock : PeriodicalTimer
@@ -53,6 +73,28 @@ struct PeriodicalTimerMock : PeriodicalTimer
     std::chrono::seconds period{};
 };
 
+struct LoggerMock
+{
+    LoggerMock& log(LogLevel log_level)
+    {
+        previous_log_level = log_level;
+        return *this;
+    }
+
+    template<class T>
+    LoggerMock& operator<<(T value)
+    {
+        if (previous_log_level == LogLevel::error)
+        {
+            error_messages.emplace_back(value);
+        }
+        return *this;
+    }
+
+    std::vector<std::string> error_messages;
+    LogLevel previous_log_level{LogLevel::info};
+};
+
 bool operator!=(const MeasurementMock& l, const MeasurementMock& r)
 {
     return l.id != r.id;
@@ -61,11 +103,12 @@ bool operator!=(const MeasurementMock& l, const MeasurementMock& r)
 TEST_CASE("Measurements are scheduled for collecting and publishing. According to requirements: OP",
           "[measurement_scheduler]")
 {
-    using MeasurementSchedulerUnderTest = MeasurementScheduler<MeasurementMock>;
+    using MeasurementSchedulerUnderTest = MeasurementScheduler<MeasurementMock, LoggerMock>;
     MeasurerMock measurer;
     PublisherMock publisher;
     PeriodicalTimerMock measuring_interval_timer;
     PeriodicalTimerMock publishing_interval_timer;
+    LoggerMock logger;
 
     auto make_measurement_scheduler{
         [&](MeasurementIntervalInSeconds measurement_interval, PublishingIntervalInSeconds publishing_interval) {
@@ -74,8 +117,19 @@ TEST_CASE("Measurements are scheduled for collecting and publishing. According t
                                                  measurer,
                                                  publisher,
                                                  measuring_interval_timer,
-                                                 publishing_interval_timer};
+                                                 publishing_interval_timer,
+                                                 logger};
         }};
+
+    auto make_default_measurement_scheduler{[&]() {
+        return MeasurementSchedulerUnderTest{MeasurementIntervalInSeconds{1},
+                                             PublishingIntervalInSeconds{2},
+                                             measurer,
+                                             publisher,
+                                             measuring_interval_timer,
+                                             publishing_interval_timer,
+                                             logger};
+    }};
 
     SECTION("No measurement is collected before measurement interval has passed")
     {
@@ -182,5 +236,18 @@ TEST_CASE("Measurements are scheduled for collecting and publishing. According t
         [[maybe_unused]] auto scheduler{
             make_measurement_scheduler(MeasurementIntervalInSeconds{30}, PublishingIntervalInSeconds{70})};
         REQUIRE(publishing_interval_timer.period == std::chrono::seconds(70));
+    }
+
+    SECTION("Error is logged on Publisher error")
+    {
+        auto scheduler{make_default_measurement_scheduler()};
+        publisher.error = PublisherMock::Error{"just testing!"};
+        publishing_interval_timer.periodical_callback();
+        REQUIRE_THAT(logger.error_messages,
+                     Catch::Matchers::Equals(std::vector<std::string>{"Publisher: ", "just testing!"}));
+    }
+
+    SECTION("Error is logged on Measurer error")
+    {
     }
 }
