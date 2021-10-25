@@ -8,6 +8,7 @@
 
 #include <chrono>
 #include <list>
+#include <optional>
 #include <vector>
 
 #include "catch2/matchers/catch_matchers_string.hpp"
