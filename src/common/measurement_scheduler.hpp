@@ -71,6 +71,7 @@ class MeasurementScheduler
             try
             {
                 // TODO: mutex here
+                this->logger.log(LogLevel::info) << "MeasurementScheduler: requesting measurement.\r\n";
                 auto measurement{this->measurer.measure()};
                 collected_measurements.emplace_back(std::move(measurement));
             } catch (const typename MeasurerBridge::Error& error)
@@ -83,6 +84,7 @@ class MeasurementScheduler
             try
             {
                 // TODO: mutex here
+                this->logger.log(LogLevel::info) << "MeasurementScheduler: requesting publishing.\r\n";
                 this->publisher.publish(std::move(collected_measurements));
                 reserve_space_for_measurements();
             } catch (const typename PublisherBridge::Error& error)
