@@ -17,7 +17,7 @@ set(CMAKE_CXX_EXTENSIONS ON)
 
 file(REAL_PATH ${CMAKE_SOURCE_DIR}/../ PROJECT_ROOT_DIR)
 
-include(../cmake/utilities.cmake)
+include(../cmake/static_code_analysis.cmake)
 
 add_subdirectory(../src/common src/common)
 
