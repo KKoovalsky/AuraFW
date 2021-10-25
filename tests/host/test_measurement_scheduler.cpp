@@ -24,7 +24,7 @@ struct MeasurerMock : Measurer<MeasurementMock>
     {
         if (error.has_value())
         {
-            throw *error;
+            throw *error; // NOLINT(misc-throw-by-value-catch-by-reference,cert-err60-cpp)
         }
 
         measured_times++;
@@ -56,7 +56,7 @@ struct PublisherMock : Publisher<MeasurementMock>
     {
         if (error.has_value())
         {
-            throw *error;
+            throw *error; // NOLINT(misc-throw-by-value-catch-by-reference,cert-err60-cpp)
         }
         published_times++;
         published_measurements.push_back(measurements);
