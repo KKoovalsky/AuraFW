@@ -1,6 +1,6 @@
 function(ProvideCatch2)
 
-    Include(FetchContent)
+    include(FetchContent)
 
     FetchContent_Declare(
       Catch2
@@ -16,7 +16,7 @@ endfunction()
 
 function(ProvideLlvm)
 
-    Include(FetchContent)
+    include(FetchContent)
 
     set(COMMON_DEPENDENCIES_PATH ${CMAKE_SOURCE_DIR}/../build/common_dependencies)
 
