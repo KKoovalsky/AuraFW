@@ -31,7 +31,7 @@ string(CONCAT basic_flags
     " -Wall -Wextra"
     " -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16"
     " -nostdlib -nostdlib++"
-    " --sysroot=${ARM_GNU_TOOLCHAIN_PATH}/sysroot")
+    " --sysroot=${ARM_GNU_TOOLCHAIN_PATH}/arm-none-eabi")
 
 set(object_file_generation_flags "-fdata-sections -ffunction-sections")
 set(compile_c_flags "${basic_flags} ${object_file_generation_flags}")
