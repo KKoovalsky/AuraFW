@@ -30,12 +30,14 @@ set(CMAKE_SIZE_BIN ${CLANG_COMPILER_PATH_PREFIX}/llvm-size)
 string(CONCAT basic_flags
     " -Wall -Wextra"
     " -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16"
-    " -nostdlib -nostdlib++"
+    " -nodefaultlibs"
     " --sysroot=${ARM_GNU_TOOLCHAIN_PATH}/arm-none-eabi")
 
 set(object_file_generation_flags "-fdata-sections -ffunction-sections")
 set(compile_c_flags "${basic_flags} ${object_file_generation_flags}")
-set(extra_linker_flags "-Wl,--gc-sections")
+
+set(standard_libraries_dir "${ARM_GNU_TOOLCHAIN_PATH}/arm-none-eabi/lib/thumb/v7e-m+fp/hard/")
+set(extra_linker_flags "-Wl,--gc-sections -L${standard_libraries_dir} -lc_nano")
 
 set(CMAKE_C_FLAGS_INIT "${compile_c_flags}")
 set(CMAKE_ASM_FLAGS_INIT  "${basic_flags}")
