@@ -42,10 +42,16 @@ function(ProvideArmGnuToolchain)
 
     include(FetchContent)
 
+    set(COMMON_DEPENDENCIES_PATH ${CMAKE_SOURCE_DIR}/../build/common_dependencies)
+
     FetchContent_Declare(
         ArmGnuToolchain
         URL https://developer.arm.com/-/media/Files/downloads/gnu-rm/10.3-2021.10/gcc-arm-none-eabi-10.3-2021.10-x86_64-linux.tar.bz2
         URL_HASH MD5=2383e4eb4ea23f248d33adc70dc3227e
+        PREFIX ${COMMON_DEPENDENCIES_PATH}
+        SUBBUILD_DIR ${COMMON_DEPENDENCIES_PATH}/armgnutoolchain-subbuild
+        SOURCE_DIR ${COMMON_DEPENDENCIES_PATH}/armgnutoolchain-src
+        BINARY_DIR ${COMMON_DEPENDENCIES_PATH}/armgnutoolchain-build
     )
 
     FetchContent_MakeAvailable(ArmGnuToolchain)
