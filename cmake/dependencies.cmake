@@ -61,3 +61,29 @@ function(ProvideArmGnuToolchain)
     set(ARM_GNU_TOOLCHAIN_PATH "${ARM_GNU_TOOLCHAIN_SOURCE_DIR}" CACHE PATH "Path to the ARM GNU toolchain")
 
 endfunction()
+
+function(DownloadAndPopulateJunglesCMakeHelpers)
+
+    include(FetchContent)
+
+    FetchContent_Declare(
+        cmake_helpers
+        GIT_REPOSITORY https://github.com/KKoovalsky/CMakeHelpers.git
+        GIT_TAG e81be067115c349a55715e325ebed98795d55cfa
+    )
+    FetchContent_MakeAvailable(cmake_helpers)
+
+endfunction()
+
+
+function(ProvideFreertos)
+
+    JunglesHelpers_DownloadAndPopulateFreeRTOSKernel(freertos V10.4.3 heap_4)
+    target_include_directories(freertos PUBLIC ${FREERTOS_SOURCE_DIR}/portable/GCC/ARM_CM4F)
+    target_sources(freertos PUBLIC ${FREERTOS_SOURCE_DIR}/portable/GCC/ARM_CM4F/port.c)
+
+    # freertos_config shall be supplied externally. It shall contain at least include path to the FreeRTOSConfig.h.
+    target_link_libraries(freertos PUBLIC freertos_config)
+
+endfunction()
+

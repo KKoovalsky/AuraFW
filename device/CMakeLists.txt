@@ -18,6 +18,9 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
+DownloadAndPopulateJunglesCMakeHelpers()
+ProvideFreertos()
+
 include(../cmake/static_code_analysis.cmake)
 
 add_subdirectory(../src/common src/common)
