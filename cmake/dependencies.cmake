@@ -88,3 +88,25 @@ function(ProvideFreertos)
 
 endfunction()
 
+function(ProvideGoogleTestForDevice)
+
+    # GoogleTest specific flags that enable build for a bare metal target
+    option(INSTALL_GTEST "Enable installation of googletest." OFF)
+    option(gtest_disable_pthreads "Disable uses of pthreads in gtest." ON)
+
+    include(FetchContent)
+    FetchContent_Declare(
+        googletest
+        GIT_REPOSITORY https://github.com/google/googletest.git
+        GIT_TAG 16f637fbf4ffc3f7a01fa4eceb7906634565242f
+    )
+    FetchContent_MakeAvailable(googletest)
+
+    target_compile_definitions(gtest PUBLIC
+        GTEST_HAS_POSIX_RE=0
+        GTEST_HAS_DEATH_TEST=0
+        GTEST_HAS_STREAM_REDIRECTION=0
+        GTEST_OS_NONE=0)
+
+endfunction()
+
