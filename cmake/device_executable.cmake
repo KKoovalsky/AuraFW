@@ -1,3 +1,7 @@
+##########################################################################################
+# Function definitions
+##########################################################################################
+
 function(MakeDeviceExecutable target_name)
 
     LinkDeviceSpecificDetails(${target_name})
@@ -8,17 +12,13 @@ function(MakeDeviceExecutable target_name)
 endfunction()
 
 function(LinkDeviceSpecificDetails target_name)
-
-    set(cube_generated_files_dir "${PROJECT_ROOT_DIR}/device/cube/Aura")
-    set(startup_file "${cube_generated_files_dir}/startup_stm32l432xx.s")
-    set(clang_init_file "${PROJECT_ROOT_DIR}/device/clang_init.c")
-
-    add_library(device_specific STATIC ${startup_file} ${clang_init_file})
+set(cube_generated_files_dir "${PROJECT_ROOT_DIR}/device/cube/Aura")
 
     set(linker_script "${cube_generated_files_dir}/STM32L432KCUx_FLASH.ld")
     target_link_options(${target_name} PRIVATE -T${linker_script})
 
     target_link_libraries(${target_name} PRIVATE device_specific)
+    target_link_libraries(${target_name} PRIVATE cube)
 
 endfunction()
 
@@ -50,3 +50,18 @@ function(AddFlashTarget target_name)
     )
 
 endfunction()
+
+function(CreateDeviceSpecificLibraries)
+
+    set(cube_generated_files_dir "${PROJECT_ROOT_DIR}/device/cube/Aura")
+    set(startup_file "${cube_generated_files_dir}/startup_stm32l432xx.s")
+    set(clang_init_file "${PROJECT_ROOT_DIR}/device/clang_init.c")
+
+    add_library(device_specific STATIC ${startup_file} ${clang_init_file})
+
+endfunction()
+
+##########################################################################################
+# Main script
+##########################################################################################
+CreateDeviceSpecificLibraries()

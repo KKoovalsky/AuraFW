@@ -28,5 +28,4 @@ add_subdirectory(../src/common src/common)
 add_subdirectory(cube)
 
 add_executable(firmware main.cpp)
-target_link_libraries(firmware PRIVATE cube)
 MakeDeviceExecutable(firmware)
