@@ -29,6 +29,3 @@ add_subdirectory(cube)
 
 add_executable(firmware main.cpp)
 MakeDeviceExecutable(firmware)
-
-enable_testing()
-add_subdirectory(../tests/device tests/device)
