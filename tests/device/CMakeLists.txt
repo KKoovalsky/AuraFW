@@ -5,8 +5,3 @@
 ##########################################################################################
 # Main script
 ##########################################################################################
-ProvideGoogleTestForDevice()
-
-add_executable(dummy_test dummy_test.cpp)
-MakeDeviceExecutable(dummy_test)
-target_link_libraries(dummy_test PRIVATE gtest)
