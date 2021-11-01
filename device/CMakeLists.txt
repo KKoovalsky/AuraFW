@@ -27,6 +27,7 @@ ProvideFreertos()
 
 include(../cmake/static_code_analysis.cmake)
 include(../cmake/device_executable.cmake)
+include(../cmake/host_tools.cmake)
 
 add_subdirectory(../src/common src/common)
 add_subdirectory(cube)
