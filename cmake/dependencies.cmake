@@ -97,4 +97,8 @@ function(ProvideUnity)
     )
     FetchContent_MakeAvailable(unity_project)
 
+    FetchContent_GetProperties(unity_project SOURCE_DIR unity_source_dir)
+
+    set(UNITY_SOURCE_DIR ${unity_source_dir} PARENT_SCOPE)
+
 endfunction()
