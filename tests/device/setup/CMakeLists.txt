@@ -1,0 +1,1 @@
+add_library(device_test_setup STATIC test_runner.cpp)

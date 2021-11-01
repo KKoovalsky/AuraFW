@@ -8,3 +8,5 @@
 include(../../cmake/device_tests.cmake)
 
 ProvideUnity()
+
+add_subdirectory(setup)
