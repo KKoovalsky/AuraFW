@@ -10,3 +10,4 @@ include(../../cmake/device_tests.cmake)
 ProvideUnity()
 
 add_subdirectory(setup)
+add_subdirectory(test_serial_logger)
