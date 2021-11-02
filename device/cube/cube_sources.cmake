@@ -7,6 +7,7 @@ set(cube_core_sources
     stm32l4xx_hal_msp.c
     stm32l4xx_hal_timebase_tim.c
     system_stm32l4xx.c
+    usart.c
 )
 list(TRANSFORM cube_core_sources PREPEND ${cube_core_src_dir})
 
@@ -27,6 +28,7 @@ set(cube_drivers_sources
     stm32l4xx_hal_exti.c
     stm32l4xx_hal_tim.c
     stm32l4xx_hal_tim_ex.c
+    stm32l4xx_hal_uart.c
 )
 list(TRANSFORM cube_drivers_sources PREPEND ${cube_drivers_src_dir})
 
