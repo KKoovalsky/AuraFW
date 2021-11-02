@@ -31,6 +31,7 @@ include(../cmake/host_tools.cmake)
 
 add_subdirectory(../src/common src/common)
 add_subdirectory(cube)
+add_subdirectory(serial_logger)
 
 add_executable(firmware main.cpp)
 MakeDeviceExecutable(firmware)

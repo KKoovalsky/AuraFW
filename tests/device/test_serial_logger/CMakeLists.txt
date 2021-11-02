@@ -1,2 +1,3 @@
 add_executable(test_serial_logger test_serial_logger.cpp)
 CreateDeviceTest(test_serial_logger)
+target_link_libraries(test_serial_logger PRIVATE serial_logger)

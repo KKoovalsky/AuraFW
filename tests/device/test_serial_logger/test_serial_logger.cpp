@@ -3,6 +3,9 @@
  * @brief   Tests the SerialLogger
  * @author  Kacper Kowalski - kacper.s.kowalski@gmail.com
  */
+#include "unity.h"
+
+#include "serial_logger.hpp"
 
 // =====================================================================================================================
 // Test cases declaration
@@ -20,6 +23,15 @@ void test_cannot_use_output_operator_without_calling_log_first();
 // =====================================================================================================================
 void test_simple_log_is_printed()
 {
+    bool is_success{false};
+    try
+    {
+        SerialLogger{}.log(LogLevel::info) << "some simple log";
+        is_success = true;
+    } catch (const std::exception&)
+    {
+    }
+    TEST_ASSERT(is_success);
 }
 
 void test_implements_loggable()
