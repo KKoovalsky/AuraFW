@@ -26,12 +26,16 @@ function(GenerateTestRunnerOnTestExecutableRebuild target_name)
         NO_DEFAULT_PATH
         NO_CACHE)
 
-    set(main_function_renamer ${PROJECT_ROOT_DIR}/scripts/rename_main_to_test_main.py)
+    set(post_generation_test_runner_fixer ${PROJECT_ROOT_DIR}/scripts/fix_test_runner_after_generation.py)
 
     add_custom_command(OUTPUT ${test_runner_filename}
-        COMMAND ${ruby_program} ${test_runner_generator} ${test_file} ${test_runner_filepath}
-        # Rename main() in the generated file to test_main() to avoid clash with main() from 'cube' directory.
-        COMMAND ${python3_program} ${main_function_renamer} ${test_runner_filepath}
+        # Test runner generator will copy all the "include" lines to the generated file. This is unwanted. We use
+        # option to put all that includes to a separate header file and then remove the include line from the
+        # generated file.
+        COMMAND ${ruby_program} ${test_runner_generator}
+            --header_file="dummy_header.hpp" ${test_file} ${test_runner_filepath}
+        # The fixer renames main() function to test_main() and removes the inclusion to "dummy_header.hpp"
+        COMMAND ${python3_program} ${post_generation_test_runner_fixer} ${test_runner_filepath}
         DEPENDS ${test_file}
     )
 
