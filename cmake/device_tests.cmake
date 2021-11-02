@@ -33,7 +33,9 @@ function(GenerateTestRunnerOnTestExecutableRebuild target_name)
         # option to put all that includes to a separate header file and then remove the include line from the
         # generated file.
         COMMAND ${ruby_program} ${test_runner_generator}
-            --header_file="dummy_header.hpp" ${test_file} ${test_runner_filepath}
+            --header_file="dummy_header.hpp"
+            --main_name="test_main"
+            ${test_file} ${test_runner_filepath}
         # The fixer renames main() function to test_main() and removes the inclusion to "dummy_header.hpp"
         COMMAND ${python3_program} ${post_generation_test_runner_fixer} ${test_runner_filepath}
         DEPENDS ${test_file}
