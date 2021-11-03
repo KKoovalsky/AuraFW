@@ -1,1 +1,2 @@
 add_library(device_test_setup STATIC test_runner.cpp)
+target_link_libraries(device_test_setup PRIVATE jungles::os_helpers)
