@@ -46,6 +46,22 @@ void test_implements_loggable()
 
 void test_multiple_logs_are_printed()
 {
+    return;
+    bool is_success{false};
+    try
+    {
+        SerialLogger serial_logger{};
+        serial_logger.log(LogLevel::info) << "some log1";
+        serial_logger.log(LogLevel::info) << "some log2";
+        serial_logger.log(LogLevel::info) << "some log3";
+        serial_logger.log(LogLevel::info) << "some log4";
+        serial_logger.log(LogLevel::info) << "some log5";
+        serial_logger.log(LogLevel::info) << "some log6";
+        is_success = true;
+    } catch (const std::exception&)
+    {
+    }
+    TEST_ASSERT(is_success);
 }
 
 void test_enormous_number_of_logs_doesnt_clog_the_logger()
