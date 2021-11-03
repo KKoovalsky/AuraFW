@@ -33,6 +33,9 @@ class SerialLogger
                 return "ERROR: ";
             }
         }
+
+      private:
+        void write_bytes_over_uart(unsigned char* data, unsigned length);
     };
 
   public:
