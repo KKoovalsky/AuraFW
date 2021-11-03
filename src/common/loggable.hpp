@@ -19,12 +19,12 @@ enum class LogLevel
 template<typename T>
 concept Loggable = requires(T v, unsigned unsigned_, int int_, float float_, unsigned char unsigned_char_, char char_)
 {
-    v << "string literal" //
-      << unsigned_        //
-      << int_             //
-      << float_           //
-      << unsigned_char_   //
-      << char_;           //
+    v.log(LogLevel{}) << "string literal" //
+                      << unsigned_        //
+                      << int_             //
+                      << float_           //
+                      << unsigned_char_   //
+                      << char_;           //
 };
 
 #endif /* LOGGABLE_HPP */
