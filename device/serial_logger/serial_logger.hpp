@@ -46,7 +46,7 @@ class SerialLogger
   public:
     explicit SerialLogger();
     ~SerialLogger();
-    SerialLoggerProxy log(LogLevel log_level) const;
+    [[nodiscard]] SerialLoggerProxy log(LogLevel log_level) const;
 
   private:
 };
