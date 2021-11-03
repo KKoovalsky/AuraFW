@@ -22,6 +22,32 @@ SerialLogger::SerialLoggerProxy::~SerialLoggerProxy()
     *this << "\r\n";
 }
 
+SerialLogger::SerialLoggerProxy& SerialLogger::SerialLoggerProxy::operator<<(char c)
+{
+    write_bytes_over_uart(reinterpret_cast<uint8_t*>(&c), 1);
+    return *this;
+}
+
+SerialLogger::SerialLoggerProxy& SerialLogger::SerialLoggerProxy::operator<<(unsigned char)
+{
+    return *this;
+}
+
+SerialLogger::SerialLoggerProxy& SerialLogger::SerialLoggerProxy::operator<<(float)
+{
+    return *this;
+}
+
+SerialLogger::SerialLoggerProxy& SerialLogger::SerialLoggerProxy::operator<<(unsigned int)
+{
+    return *this;
+}
+
+SerialLogger::SerialLoggerProxy& SerialLogger::SerialLoggerProxy::operator<<(int)
+{
+    return *this;
+}
+
 void SerialLogger::SerialLoggerProxy::write_bytes_over_uart(unsigned char* data, unsigned int length)
 {
     uint32_t timeout_ms{300};

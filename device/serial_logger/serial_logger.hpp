@@ -20,6 +20,11 @@ class SerialLogger
         ~SerialLoggerProxy();
 
         SerialLoggerProxy& operator<<(std::string);
+        SerialLoggerProxy& operator<<(char);
+        SerialLoggerProxy& operator<<(unsigned char);
+        SerialLoggerProxy& operator<<(float);
+        SerialLoggerProxy& operator<<(unsigned);
+        SerialLoggerProxy& operator<<(int);
 
         static inline constexpr const char* log_level_to_string(LogLevel log_level)
         {

@@ -41,6 +41,7 @@ void test_simple_log_is_printed()
 
 void test_implements_loggable()
 {
+    static_assert(Loggable<SerialLogger>);
 }
 
 void test_multiple_logs_are_printed()
