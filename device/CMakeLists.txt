@@ -24,6 +24,7 @@ set(CMAKE_C_EXTENSIONS ON)
 
 DownloadAndPopulateJunglesCMakeHelpers()
 ProvideFreertos()
+ProvideJunglesOsHelpers()
 
 include(../cmake/static_code_analysis.cmake)
 include(../cmake/device_executable.cmake)

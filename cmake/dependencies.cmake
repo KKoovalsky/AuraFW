@@ -102,3 +102,16 @@ function(ProvideUnity)
     set(UNITY_SOURCE_DIR ${unity_source_dir} PARENT_SCOPE)
 
 endfunction()
+
+function(ProvideJunglesOsHelpers)
+
+    include(FetchContent)
+    FetchContent_Declare(JunglesOsHelpers
+        GIT_REPOSITORY https://github.com/KKoovalsky/JunglesOsHelpers.git
+        GIT_TAG d0644fbb6eacbef5190a1c85f5640a3df60abb9b
+    )
+
+    FetchContent_MakeAvailable(JunglesOsHelpers)
+    target_link_libraries(JunglesOsHelpers INTERFACE freertos)
+
+endfunction()
