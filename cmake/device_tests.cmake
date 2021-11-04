@@ -44,7 +44,7 @@ function(GenerateTestRunnerOnTestExecutableRebuild target_name)
     set(test_runner ${target_name}_runner)
     # CMake will figure out that the file is an OUTPUT from custom command and create proper dependencies for that.
     add_library(${test_runner} STATIC ${test_runner_filename})
-    target_link_libraries(${test_runner} PRIVATE unity::framework)
+    target_link_libraries(${test_runner} PRIVATE unity_interface)
 
     target_link_libraries(${target_name} PRIVATE ${test_runner})
 
