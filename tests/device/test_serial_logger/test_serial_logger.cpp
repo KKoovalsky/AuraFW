@@ -23,6 +23,7 @@ void test_unsigned_int_is_printed();
 void test_negative_int_is_printed();
 void test_positive_int_is_printed();
 void test_single_char_is_printed();
+
 // =====================================================================================================================
 // Test cases definition
 // =====================================================================================================================
@@ -46,7 +47,6 @@ void test_implements_loggable()
 
 void test_multiple_logs_are_printed()
 {
-    return;
     bool is_success{false};
     try
     {
