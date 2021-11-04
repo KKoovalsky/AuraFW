@@ -46,7 +46,7 @@ set(compile_cxx_flags "${compile_c_flags} ${system_include_cxx_flags}")
 set(standard_libraries_dir "${ARM_GNU_TOOLCHAIN_PATH}/arm-none-eabi/lib/thumb/v7e-m+fp/hard/")
 set(libgcc_dir "${ARM_GNU_TOOLCHAIN_PATH}/lib/gcc/arm-none-eabi/${ARM_GNU_TOOLCHAIN_GCC_VERSION}/thumb/v7e-m+fp/hard/")
 string(CONCAT extra_linker_flags
-    " -Wl,--gc-sections -Wl,-Map=output.map"
+    " -Wl,--gc-sections -Wl,-Map=output.map -flto"
     " -L${standard_libraries_dir} -L${libgcc_dir}"
     " -lc_nano -lm -lnosys -lstdc++_nano -lgcc")
 
