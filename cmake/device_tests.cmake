@@ -1,13 +1,18 @@
 function(CreateDeviceTest target_name)
 
+    set(options NO_UNITY_OUTPUT)
+    set(one_value_args )
+    set(multi_value_args)
+    cmake_parse_arguments(DEVICE_TEST "${options}" "${one_value_args}" "${multi_value_args}" ${ARGN} )
+
     MakeDeviceExecutable(${target_name})
     target_link_libraries(${target_name} PRIVATE device_test_setup unity::framework)
 
-    GenerateTestRunnerOnTestExecutableRebuild(${target_name})
+    GenerateTestRunnerOnTestExecutableRebuild(${target_name} ${DEVICE_TEST_NO_UNITY_OUTPUT})
 
 endfunction()
 
-function(GenerateTestRunnerOnTestExecutableRebuild target_name)
+function(GenerateTestRunnerOnTestExecutableRebuild target_name is_unity_output_disabled)
 
     EnsureRubyIsInstalled(ruby_program)
     EnsurePython3IsInstalled(python3_program)
@@ -20,11 +25,7 @@ function(GenerateTestRunnerOnTestExecutableRebuild target_name)
     # Use find_file() to get the full path to the source file with the tests.
     # The source file shall be put under the same directory under which the current CMakeLists.txt is put.
     set(test_filename ${target_name}.cpp)
-    find_file(test_file ${test_filename}
-        PATHS ${CMAKE_CURRENT_SOURCE_DIR}
-        REQUIRED
-        NO_DEFAULT_PATH
-        NO_CACHE)
+    find_file(test_file ${test_filename} PATHS ${CMAKE_CURRENT_SOURCE_DIR} REQUIRED NO_DEFAULT_PATH NO_CACHE)
 
     set(post_generation_test_runner_fixer ${PROJECT_ROOT_DIR}/scripts/fix_test_runner_after_generation.py)
 
@@ -44,7 +45,12 @@ function(GenerateTestRunnerOnTestExecutableRebuild target_name)
     set(test_runner ${target_name}_runner)
     # CMake will figure out that the file is an OUTPUT from custom command and create proper dependencies for that.
     add_library(${test_runner} STATIC ${test_runner_filename})
-    target_link_libraries(${test_runner} PRIVATE unity_interface)
+
+    if(is_unity_output_disabled)
+        target_link_libraries(${test_runner} PRIVATE unity_interface_no_output)
+    else()
+        target_link_libraries(${test_runner} PRIVATE unity_interface)
+    endif()
 
     target_link_libraries(${target_name} PRIVATE ${test_runner})
 
