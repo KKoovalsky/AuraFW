@@ -7,7 +7,7 @@ function(MakeDeviceExecutable target_name)
     LinkDeviceSpecificDetails(${target_name})
     GenerateHexAfterBuild(${target_name})
     PrintBinarySizeAfterBuild(${target_name})
-    AddFlashTarget(${target_name})
+    AddFlashTargets(${target_name})
 
 endfunction()
 
@@ -42,11 +42,20 @@ function(PrintBinarySizeAfterBuild target_name)
 
 endfunction()
 
-function(AddFlashTarget target_name)
+function(AddFlashTargets target_name)
 
     find_program(OPENOCD_PROGRAM NAMES openocd REQUIRED)
+
     add_custom_target(${target_name}-flash
-        COMMAND ${OPENOCD_PROGRAM} -f board/stm32l4discovery.cfg -c "program $<TARGET_FILE:${target_name}> reset exit"
+        COMMAND ${OPENOCD_PROGRAM} -f board/stm32l4discovery.cfg
+            -c "program $<TARGET_FILE:${target_name}> ; reset ; exit"
+        VERBATIM
+    )
+
+    add_custom_target(${target_name}-flash_no_run
+        COMMAND ${OPENOCD_PROGRAM} -f board/stm32l4discovery.cfg
+            -c "program $<TARGET_FILE:${target_name}> ; reset halt ; exit"
+        VERBATIM
     )
 
 endfunction()
