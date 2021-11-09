@@ -1,4 +1,19 @@
-function(CreateDeviceTest target_name)
+#! PromoteToDeviceTestExecutable: Promotes the executable target to be run as device test.
+#
+# This will enchant 'target_name' to be runnable on the device, by linking proper flags and libraries to it, and
+# create <target_name>-flash target that can be used to flash the target to the device.
+#
+# Moreover, it will promote it, not only to a device executable, but also, a test executable, by linking test
+# libraries and generating a runner. The unit testing framework is ThrowTheSwitch/Unity.
+#
+# This function expects that the target specified as the first argument has source file called <target_name>.cpp,
+# which defines tests, starting with "test_*", that are used to generate an Unity runner.
+#
+# Optional argument NO_UNITY_OUTPUT can be specified to disable forwarding Unity output to serial.
+#
+# \arg:target_name              Executable target name, which contains the tests.
+#
+function(PromoteToDeviceTestExecutable target_name)
 
     set(options NO_UNITY_OUTPUT)
     set(one_value_args )
