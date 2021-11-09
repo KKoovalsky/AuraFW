@@ -66,6 +66,7 @@ void test_multiple_logs_are_printed()
 
 void test_enormous_number_of_logs_doesnt_clog_the_logger()
 {
+    // 1000 logs then delay and then one more log
 }
 
 void test_multiple_instances_of_logger_can_be_created_simultaneously()
