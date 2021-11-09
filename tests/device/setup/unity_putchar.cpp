@@ -5,4 +5,6 @@
  */
 extern "C" void unity_putchar(int)
 {
+#warning "Not yet implemented!"
+
 }
