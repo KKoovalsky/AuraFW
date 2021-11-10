@@ -38,3 +38,6 @@ PromoteToDeviceTestExecutable(test_serial_logger test_serial_logger)
 target_link_libraries(test_serial_logger PRIVATE serial_logger)
 
 CreateSerialLoggerTestExpectingOutput(simple_log "INFO: some simple log")
+
+CreateSerialLoggerTestExpectingOutput(multiple_logs
+    "INFO: some log 1.*INFO: some log2.*INFO: some log 3.*INFO: some log 4.*INFO: some log 5.*INFO: some log 6.*")
