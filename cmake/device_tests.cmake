@@ -1,7 +1,11 @@
+##########################################################################################
+# Functions definition
+##########################################################################################
+
+
 #! PromoteToDeviceTestExecutable: Promotes the executable target to be run as device test.
 #
-# This will enchant 'target_name' to be runnable on the device, by linking proper flags and libraries to it, and
-# create <target_name>-flash target that can be used to flash the target to the device.
+# This will enchant 'target_name' to be runnable on the device, by calling MakeDeviceExecutable on it.
 #
 # Moreover, it will promote it, not only to a device executable, but also, a test executable, by linking test
 # libraries and generating a runner. The unit testing framework is ThrowTheSwitch/Unity.
