@@ -41,3 +41,6 @@ CreateSerialLoggerTestExpectingOutput(simple_log "INFO: some simple log")
 
 CreateSerialLoggerTestExpectingOutput(multiple_logs
     "INFO: some log 1.*INFO: some log2.*INFO: some log 3.*INFO: some log 4.*INFO: some log 5.*INFO: some log 6.*")
+
+CreateSerialLoggerTestExpectingOutput(enormous_number_of_logs_doesnt_clog
+    "(INFO: some log, which is not so long\\r\\n){1000}")
