@@ -70,3 +70,33 @@ function(GenerateTestRunnerOnTestExecutableRebuild target_name is_unity_output_d
     target_link_libraries(${target_name} PRIVATE ${test_runner})
 
 endfunction()
+
+function(AddSanitizerForSerialPortDefined)
+
+    set(AURA_SERIAL_PORT "" CACHE STRING
+        "Serial port on which logs are collected from Aura (e.g. /dev/ttyUSB1 or COM3)")
+
+    set(sanitizer ${PROJECT_ROOT_DIR}/cmake/sanitize_variable_not_empty.cmake)
+
+    string(CONCAT error_message
+        "CMake CACHE variable AURA_SERIAL_PORT undefined. "
+        "Define it to indicate the port on which the logs from Aura are collected "
+        "e.g. '/dev/ttyUSB1' for Linux or 'COM3' for Windows"
+    )
+
+    add_test(NAME sanitize_serial_port_defined
+             COMMAND ${CMAKE_COMMAND}
+                -DNAME=AURA_SERIAL_PORT
+                -DVALUE=${AURA_SERIAL_PORT}
+                -DERROR_MESSAGE=${error_message}
+                -P ${sanitizer})
+
+    set_tests_properties(sanitize_serial_port_defined PROPERTIES FIXTURES_SETUP SerialPort)
+
+endfunction()
+
+##########################################################################################
+# Main script
+##########################################################################################
+
+AddSanitizerForSerialPortDefined()
