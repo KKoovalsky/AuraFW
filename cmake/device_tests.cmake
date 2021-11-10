@@ -31,6 +31,56 @@ function(PromoteToDeviceTestExecutable target_name)
 
 endfunction()
 
+#! AddDeviceTest: Adds a device test usable with ctest.
+#
+# This will call add_test() with command which:
+#   1. Flashes the 'target_name' executable and halts the device.
+#   2. Uses run_device_test.py to run the device and captures serial output.
+#   3. Waits for Unity's test output to check whether the tests have failed. If PASS_REGEX argument is specified, then
+#      the default pass criteria is overwritten with the regex specified with PASS_REGEX. Otherwise (no PASS_REGEX
+#      argument specified), the test will pass if the serial logs have line:
+#
+#           "<X> Tests 0 Failures <Y> Ignored"
+#
+#      or fail if the line with Z != 0 appeared in the logs:
+#
+#           "<X> Tests <Z> Failures <Y> Ignored"
+#
+# The PASS_REGEX will be forwarded to the run_device_test.py script.
+#
+# \arg:target_name  Executable target name, which contains the tests.
+# \arg:test_name    The resulting test name, which then can be used with 'ctest -R' invocation, or with CMake
+#                   functions like set_tests_properties(), etc.
+#
+function(AddDeviceTest target_name test_name)
+
+    set(options )
+    set(one_value_args PASS_REGEX)
+    set(multi_value_args)
+    cmake_parse_arguments(DEVICE_TEST "${options}" "${one_value_args}" "${multi_value_args}" ${ARGN})
+
+    set(flasher ${test_name}-flash_no_run)
+    add_test(NAME ${flasher}
+             COMMAND ${CMAKE_COMMAND} --build . --target ${target_name}-flash_no_run)
+
+    set(test_driver ${PROJECT_ROOT_DIR}/scripts/drive_device_test.py)
+
+    if(DEVICE_TEST_PASS_REGEX)
+        set(custom_pass_regex_cmd_arg --pass_regex ${DEVICE_TEST_PASS_REGEX})
+    endif()
+
+
+    add_test(NAME ${test_name}
+             COMMAND ${test_driver} --port ${AURA_SERIAL_PORT} ${custom_pass_regex_cmd_arg})
+
+    # Perform flashing before test run, but before it check whether the serial port is defined.
+    set(flasher_fixture ${test_name}-flasher_fixture)
+    set_tests_properties(${flasher} PROPERTIES FIXTURES_SETUP ${flasher_fixture})
+    set_tests_properties(${flasher} PROPERTIES FIXTURES_REQUIRED "SerialPort")
+    set_tests_properties(${test_name} PROPERTIES FIXTURES_REQUIRED "${flasher_fixture}")
+
+endfunction()
+
 function(GenerateTestRunnerOnTestExecutableRebuild target_name is_unity_output_disabled)
 
     EnsureRubyIsInstalled(ruby_program)
