@@ -45,6 +45,8 @@ def drive_device_test(port, baud_rate, pass_regex):
     will make the script return non-zero error code.
 
     """
+    print(
+        'drive_device_test.py: lines read from serial will be echoed to stdout')
     with Serial(port, baud_rate, timeout=10) as serial_input:
         start_device()
         while True:
