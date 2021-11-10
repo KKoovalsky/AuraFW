@@ -10,7 +10,6 @@
 // =====================================================================================================================
 // Test cases declaration
 // =====================================================================================================================
-void test_simple_log_is_printed();
 void test_implements_loggable();
 void test_multiple_logs_are_printed();
 void test_enormous_number_of_logs_doesnt_clog_the_logger();
@@ -29,19 +28,6 @@ void test_error_log_is_printed();
 // =====================================================================================================================
 // Test cases definition
 // =====================================================================================================================
-void test_simple_log_is_printed()
-{
-    bool is_success{false};
-    try
-    {
-        SerialLogger{}.log(LogLevel::info) << "some simple log";
-        is_success = true;
-    } catch (const std::exception&)
-    {
-    }
-    TEST_ASSERT(is_success);
-}
-
 void test_implements_loggable()
 {
     static_assert(Loggable<SerialLogger>);
