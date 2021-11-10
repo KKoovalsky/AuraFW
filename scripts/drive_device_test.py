@@ -34,6 +34,9 @@ def drive_device_test(port, baud_rate, pass_regex):
     If PASS_REGEX is NOT specified, then the script will pass/fail
     according to Unity library output. So the output:
 
+    The PASS_REGEX might be multiline. DOTALL regex option is used as well,
+    to allow matches with '.' match also newlines.
+
     \b
             10 Tests 0 Failures 1 Ignored
 
@@ -49,15 +52,18 @@ def drive_device_test(port, baud_rate, pass_regex):
         'drive_device_test.py: lines read from serial will be echoed to stdout')
     with Serial(port, baud_rate, timeout=10) as serial_input:
         start_device()
+        lines_collected = list()
         while True:
             line = serial_input.readline().decode()
             if not line:
-                raise RuntimeError('Timeout waiting for a line from serial!')
+                raise RuntimeError(
+                    'Timeout waiting for a match from serial output!')
             echo(line.rstrip())
             if pass_regex is None:
                 exit_if_tests_finished(line)
             else:
-                exit_if_matches(pass_regex, line)
+                lines_collected.append(line)
+                exit_if_matches(pass_regex, ''.join(lines_collected))
 
 
 def start_device():
@@ -78,7 +84,7 @@ def echo(data):
 
 
 def exit_if_matches(regex: str, line: str):
-    prog = re.compile(regex)
+    prog = re.compile(regex, re.DOTALL | re.MULTILINE)
     match = prog.search(line)
     if match:
         exit(0)
