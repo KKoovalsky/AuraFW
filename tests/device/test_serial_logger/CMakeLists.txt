@@ -48,3 +48,5 @@ CreateSerialLoggerTestExpectingOutput(enormous_number_of_logs_doesnt_clog
 CreateSerialLoggerTestExpectingOutput(float_printed "INFO: 3.444\\r\\nINFO: 312.445")
 
 CreateSerialLoggerTestExpectingOutput(unsigned_char_printed_as_hex_char "INFO: 0x02\\r\\nINFO: 0xFA")
+
+CreateSerialLoggerTestExpectingOutput(unsigned_int_printed "INFO: 10000")
