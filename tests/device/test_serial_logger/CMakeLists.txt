@@ -50,3 +50,5 @@ CreateSerialLoggerTestExpectingOutput(float_printed "INFO: 3.444\\r\\nINFO: 312.
 CreateSerialLoggerTestExpectingOutput(unsigned_char_printed_as_hex_char "INFO: 0x02\\r\\nINFO: 0xFA")
 
 CreateSerialLoggerTestExpectingOutput(unsigned_int_printed "INFO: 10000")
+
+CreateSerialLoggerTestExpectingOutput(int_printed "INFO: 32000\\r\\nINFO: -32311")
