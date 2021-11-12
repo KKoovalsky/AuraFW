@@ -30,8 +30,11 @@ SerialLogger::SerialLoggerProxy& SerialLogger::SerialLoggerProxy::operator<<(cha
     return *this;
 }
 
-SerialLogger::SerialLoggerProxy& SerialLogger::SerialLoggerProxy::operator<<(unsigned char)
+SerialLogger::SerialLoggerProxy& SerialLogger::SerialLoggerProxy::operator<<(unsigned char v)
 {
+    char b[8];
+    auto length{snprintf_(b, std::size(b), "0x%02X", v)};
+    write_bytes_over_uart(b, length);
     return *this;
 }
 
