@@ -56,3 +56,6 @@ CreateSerialLoggerTestExpectingOutput(int_printed "INFO: 32000\\r\\nINFO: -32311
 CreateSerialLoggerTestExpectingOutput(char_printed "INFO: a *")
 
 CreateSerialLoggerTestExpectingOutput(verbosities_printed "INFO: info\\r\\nWARNING: warning\\r\\nERROR: error\\r\\n")
+
+CreateSerialLoggerTestExpectingOutput(chained_operations_printed
+    "INFO: Some number: 190222, some float: 3222\\.220, some other stuff: 0x22 c -1111")
