@@ -45,7 +45,7 @@ CreateSerialLoggerTestExpectingOutput(multiple_logs
 CreateSerialLoggerTestExpectingOutput(enormous_number_of_logs_doesnt_clog
     "(INFO: some log, which is not so long\\r\\n){1000}")
 
-CreateSerialLoggerTestExpectingOutput(float_printed "INFO: 3.444\\r\\nINFO: 312.445")
+CreateSerialLoggerTestExpectingOutput(float_printed "INFO: 3\\.444\\r\\nINFO: 312\\.445")
 
 CreateSerialLoggerTestExpectingOutput(unsigned_char_printed_as_hex_char "INFO: 0x02\\r\\nINFO: 0xFA")
 
