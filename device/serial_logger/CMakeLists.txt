@@ -7,16 +7,9 @@ function(ProvidePrintfLibrary)
     include(FetchContent)
 
     set(BUILD_STATIC_LIBRARY ON)
-    set(SUPPORT_EXPONENTIAL_SPECIFIERS OFF)
     set(SUPPORT_LONG_LONG OFF)
     set(ALIAS_STANDARD_FUNCTION_NAMES OFF)
-
     set(DEFAULT_FLOAT_PRECISION "3")
-
-    # From the library:
-    #   "Maximum number of integral-part digits of a floating-point value for which
-    #   printing with %f uses decimal (non-exponential) notation"
-    set(MAX_INTEGRAL_DIGITS_FOR_DECIMAL "3")
 
     FetchContent_Declare(printf_library
         GIT_REPOSITORY https://github.com/eyalroz/printf.git
