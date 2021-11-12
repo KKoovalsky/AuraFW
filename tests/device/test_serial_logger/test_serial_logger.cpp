@@ -20,6 +20,7 @@ void test_positive_int_is_printed();
 void test_single_char_is_printed();
 void test_warning_log_is_printed();
 void test_error_log_is_printed();
+void test_serial_logger_works_with_unity();
 
 // =====================================================================================================================
 // Test cases definition
@@ -58,5 +59,9 @@ void test_warning_log_is_printed()
 }
 
 void test_error_log_is_printed()
+{
+}
+
+void test_serial_logger_works_with_unity()
 {
 }
