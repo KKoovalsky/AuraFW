@@ -62,3 +62,6 @@ CreateSerialLoggerTestExpectingOutput(chained_operations_printed
 
 CreateSerialLoggerTestExpectingOutput(multiple_instances_simultaneously
     "INFO: log from logger1\\r\\nINFO: log from logger2")
+
+CreateSerialLoggerTestExpectingOutput(multiple_instances_sequentially
+    "INFO: log from logger1\\r\\nINFO: log from logger2")
