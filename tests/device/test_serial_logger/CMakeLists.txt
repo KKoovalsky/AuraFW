@@ -65,3 +65,6 @@ CreateSerialLoggerTestExpectingOutput(multiple_instances_simultaneously
 
 CreateSerialLoggerTestExpectingOutput(multiple_instances_sequentially
     "INFO: log from logger1\\r\\nINFO: log from logger2")
+
+add_executable(test_serial_logger_works_with_unity test_serial_logger_works_with_unity.cpp)
+ToDeviceTest(test_serial_logger_works_with_unity test_serial_logger_works_with_unity)

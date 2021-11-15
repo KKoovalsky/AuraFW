@@ -12,7 +12,6 @@
 // =====================================================================================================================
 void test_implements_loggable();
 
-void test_serial_logger_works_with_unity();
 void test_uncaught_exception_is_caught_by_the_runner();
 
 // =====================================================================================================================
@@ -21,10 +20,6 @@ void test_uncaught_exception_is_caught_by_the_runner();
 void test_implements_loggable()
 {
     static_assert(Loggable<SerialLogger>);
-}
-
-void test_serial_logger_works_with_unity()
-{
 }
 
 void test_uncaught_exception_is_caught_by_the_runner()
