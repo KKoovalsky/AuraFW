@@ -10,6 +10,8 @@
 
 #include "loggable.hpp"
 
+extern "C" void unity_putchar(int);
+
 class SerialLogger
 {
   private:
@@ -42,6 +44,8 @@ class SerialLogger
       private:
         static void write_bytes_over_uart(unsigned char* data, unsigned length);
         static void write_bytes_over_uart(char* data, unsigned length);
+
+        friend class SerialLogger;
     };
 
   public:
@@ -50,7 +54,11 @@ class SerialLogger
     [[nodiscard]] SerialLoggerProxy log(LogLevel log_level) const;
 
   private:
+    void log_raw(char);
+
     static unsigned instance_count;
+
+    friend void unity_putchar(int);
 };
 
 #endif /* SERIAL_LOGGER_HPP */

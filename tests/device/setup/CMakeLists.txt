@@ -4,6 +4,7 @@ target_compile_definitions(unity PUBLIC UNITY_INCLUDE_CONFIG_H)
 target_include_directories(unity PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 
 add_library(unity_putchar STATIC unity_putchar.cpp)
+target_link_libraries(unity_putchar PRIVATE serial_logger)
 
 # We could link 'unity_putchar' to 'unity' library, as PRIVATE dependency (which it is actually), but
 # 'unity' is installed (using 'install' command), and CMake expects all the dependencies to be installable as well.

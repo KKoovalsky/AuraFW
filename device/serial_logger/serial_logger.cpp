@@ -95,3 +95,8 @@ SerialLogger::~SerialLogger()
     if (instance_count == 0)
         HAL_UART_DeInit(&hlpuart1);
 }
+
+void SerialLogger::log_raw(char c)
+{
+    SerialLoggerProxy::write_bytes_over_uart(&c, 1);
+}
