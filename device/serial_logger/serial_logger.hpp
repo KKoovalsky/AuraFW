@@ -40,8 +40,8 @@ class SerialLogger
         }
 
       private:
-        void write_bytes_over_uart(unsigned char* data, unsigned length);
-        void write_bytes_over_uart(char* data, unsigned length);
+        static void write_bytes_over_uart(unsigned char* data, unsigned length);
+        static void write_bytes_over_uart(char* data, unsigned length);
     };
 
   public:
