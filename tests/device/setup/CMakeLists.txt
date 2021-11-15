@@ -23,4 +23,4 @@ add_library(unity_interface_no_output INTERFACE)
 target_link_libraries(unity_interface_no_output INTERFACE unity unity_putchar_no_output)
 
 add_library(device_test_setup STATIC test_runner.cpp)
-target_link_libraries(device_test_setup PRIVATE jungles::os_helpers)
+target_link_libraries(device_test_setup PRIVATE jungles::os_helpers serial_logger)

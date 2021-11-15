@@ -29,6 +29,17 @@ function(CreateSerialLoggerTestExpectingOutput test_name expected_output_regex)
 
 endfunction()
 
+function(CreateTestUncaughtExceptionIsProperlyLogged)
+
+    add_executable(test_logs_uncaught_exception test_logs_uncaught_exception.cpp)
+    ToDeviceTest(test_logs_uncaught_exception logs_uncaught_exception)
+
+    set_tests_properties(logs_uncaught_exception PROPERTIES PASS_REGULAR_EXPRESSION
+        "UNCAUGHT EXCEPTION: some exception message!"
+    )
+
+endfunction()
+
 ##########################################################################################
 # Main script
 ##########################################################################################
@@ -68,3 +79,5 @@ CreateSerialLoggerTestExpectingOutput(multiple_instances_sequentially
 
 add_executable(test_serial_logger_works_with_unity test_serial_logger_works_with_unity.cpp)
 ToDeviceTest(test_serial_logger_works_with_unity test_serial_logger_works_with_unity)
+
+CreateTestUncaughtExceptionIsProperlyLogged()

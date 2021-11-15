@@ -12,16 +12,10 @@
 // =====================================================================================================================
 void test_implements_loggable();
 
-void test_uncaught_exception_is_caught_by_the_runner();
-
 // =====================================================================================================================
 // Test cases definition
 // =====================================================================================================================
 void test_implements_loggable()
 {
     static_assert(Loggable<SerialLogger>);
-}
-
-void test_uncaught_exception_is_caught_by_the_runner()
-{
 }

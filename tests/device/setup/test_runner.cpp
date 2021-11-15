@@ -9,6 +9,8 @@
 
 #include "jungles_os_helpers/freertos/thread.hpp"
 
+#include "serial_logger.hpp"
+
 extern "C" void app_main();
 
 extern int test_main();
@@ -20,9 +22,9 @@ extern "C" void app_main()
         try
         {
             test_main();
-        } catch (const std::exception&)
+        } catch (const std::exception& e)
         {
-            // TODO: Here log it!
+            SerialLogger{}.log(LogLevel::error) << "UNCAUGHT EXCEPTION: " << e.what();
         }
     });
     t.join();
