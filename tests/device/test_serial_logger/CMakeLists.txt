@@ -59,3 +59,6 @@ CreateSerialLoggerTestExpectingOutput(verbosities_printed "INFO: info\\r\\nWARNI
 
 CreateSerialLoggerTestExpectingOutput(chained_operations_printed
     "INFO: Some number: 190222, some float: 3222\\.220, some other stuff: 0x22 c -1111")
+
+CreateSerialLoggerTestExpectingOutput(multiple_instances_simultaneously
+    "INFO: log from logger1\\r\\nINFO: log from logger2")

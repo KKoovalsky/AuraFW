@@ -50,6 +50,7 @@ class SerialLogger
     [[nodiscard]] SerialLoggerProxy log(LogLevel log_level) const;
 
   private:
+    static unsigned instance_count;
 };
 
 #endif /* SERIAL_LOGGER_HPP */

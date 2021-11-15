@@ -12,7 +12,6 @@
 // =====================================================================================================================
 void test_implements_loggable();
 
-void test_multiple_instances_of_logger_can_be_created_simultaneously();
 void test_multiple_instances_of_logger_can_be_created_non_simultaneously();
 void test_serial_logger_works_with_unity();
 void test_uncaught_exception_is_caught_by_the_runner();
@@ -23,10 +22,6 @@ void test_uncaught_exception_is_caught_by_the_runner();
 void test_implements_loggable()
 {
     static_assert(Loggable<SerialLogger>);
-}
-
-void test_multiple_instances_of_logger_can_be_created_simultaneously()
-{
 }
 
 void test_multiple_instances_of_logger_can_be_created_non_simultaneously()

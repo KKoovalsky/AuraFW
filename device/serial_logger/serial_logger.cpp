@@ -8,6 +8,8 @@
 
 #include "printf.h"
 
+unsigned SerialLogger::instance_count = 0;
+
 SerialLogger::SerialLoggerProxy::SerialLoggerProxy(LogLevel log_level)
 {
     *this << log_level_to_string(log_level);
@@ -80,10 +82,16 @@ SerialLogger::SerialLoggerProxy SerialLogger::log(LogLevel log_level) const
 
 SerialLogger::SerialLogger()
 {
-    MX_LPUART1_UART_Init();
+    if (instance_count == 0)
+        MX_LPUART1_UART_Init();
+
+    ++instance_count;
 }
 
 SerialLogger::~SerialLogger()
 {
-    HAL_UART_DeInit(&hlpuart1);
+    --instance_count;
+
+    if (instance_count == 0)
+        HAL_UART_DeInit(&hlpuart1);
 }
