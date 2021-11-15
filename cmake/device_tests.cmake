@@ -81,6 +81,23 @@ function(AddDeviceTest target_name test_name)
 
 endfunction()
 
+#! ToDeviceTests: Promotes executable to test executable and creates a test for it.
+#
+# This is a wrapper for PromoteToDeviceTestExecutable + AddDeviceTest. It will link all the needed libraries for the
+# executable to be test executable and creates a test that can be used with CTest. It will automatically link to Unity
+# and enable output logs from Unity library (NO_UNITY_OUTPUT is NOT supported).
+#
+# \arg:target_name  Executable target name, which contains the tests.
+# \arg:test_name    The resulting test name, which then can be used with 'ctest -R' invocation, or with CMake
+#                   functions like set_tests_properties(), etc.
+#
+function(ToDeviceTest target_name test_name)
+
+    PromoteToDeviceTestExecutable(${target_name})
+    AddDeviceTest(${target_name} ${test_name})
+
+endfunction()
+
 function(GenerateTestRunnerOnTestExecutableRebuild target_name is_unity_output_disabled)
 
     EnsureRubyIsInstalled(ruby_program)
