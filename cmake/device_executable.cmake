@@ -4,10 +4,19 @@
 
 function(MakeDeviceExecutable target_name)
 
+    LinkCustomTerminate(${target_name})
     LinkDeviceSpecificDetails(${target_name})
     GenerateHexAfterBuild(${target_name})
     PrintBinarySizeAfterBuild(${target_name})
     AddFlashTargets(${target_name})
+
+endfunction()
+
+function(LinkCustomTerminate)
+
+    set(device_dir "${PROJECT_ROOT_DIR}/device")
+    set(custom_terminate_file "${device_dir}/custom_terminate.cpp")
+    target_sources(${target_name} PRIVATE ${custom_terminate_file})
 
 endfunction()
 
