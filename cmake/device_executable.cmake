@@ -17,8 +17,7 @@ set(cube_generated_files_dir "${PROJECT_ROOT_DIR}/device/cube/Aura")
     set(linker_script "${cube_generated_files_dir}/STM32L432KCUx_FLASH.ld")
     target_link_options(${target_name} PRIVATE -T${linker_script})
 
-    target_link_libraries(${target_name} PRIVATE device_specific)
-    target_link_libraries(${target_name} PRIVATE cube)
+    target_link_libraries(${target_name} PRIVATE device_specific cube)
 
 endfunction()
 
