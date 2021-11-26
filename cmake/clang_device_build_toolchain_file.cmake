@@ -48,15 +48,28 @@ set(compile_cxx_flags "${compile_c_flags} ${system_include_cxx_flags}")
 set(standard_libraries_dir "${ARM_GNU_TOOLCHAIN_PATH}/arm-none-eabi/lib/thumb/v7e-m+fp/hard/")
 set(libgcc_dir "${ARM_GNU_TOOLCHAIN_PATH}/lib/gcc/arm-none-eabi/${ARM_GNU_TOOLCHAIN_GCC_VERSION}/thumb/v7e-m+fp/hard/")
 string(CONCAT extra_linker_flags
+    " -Wl,--sysroot=${ARM_GNU_TOOLCHAIN_PATH}/arm-none-eabi"
     " -Wl,--gc-sections -Wl,-Map=output.map"
-    " -flto"
+    " -Wl,-nostdlib"
+    " -Wl,--target2=rel"
     " -L${standard_libraries_dir} -L${libgcc_dir}"
-    " -lc -lm -lnosys -lgcc -lstdc++")
+    # This order of linking is mandatory: https://gcc.gnu.org/onlinedocs/gccint/Initialization.html
+    " ${libgcc_dir}/crti.o"
+    " ${libgcc_dir}/crtbegin.o"
+    " ${standard_libraries_dir}/crt0.o"
+    " -lc -lm -lg -lnosys -lstdc++ -lgcc"
+    " ${libgcc_dir}/crtend.o"
+    " ${libgcc_dir}/crtn.o"
+    " -flto"
+    )
+
+set(linker_flags "${basic_flags} ${extra_linker_flags}")
 
 set(CMAKE_C_FLAGS_INIT "${compile_c_flags}")
 set(CMAKE_ASM_FLAGS_INIT  "${basic_flags}")
 set(CMAKE_CXX_FLAGS_INIT "${compile_cxx_flags}")
-set(CMAKE_EXE_LINKER_FLAGS_INIT "${basic_flags} ${extra_linker_flags}")
+
+set(CMAKE_EXE_LINKER_FLAGS_INIT "${linker_flags}")
 
 set(CMAKE_C_COMPILER_TARGET armv7em-none-eabi)
 set(CMAKE_CXX_COMPILER_TARGET armv7em-none-eabi)
