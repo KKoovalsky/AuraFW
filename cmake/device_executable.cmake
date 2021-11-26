@@ -72,9 +72,8 @@ function(CreateDeviceSpecificLibraries)
 
     set(cube_generated_files_dir "${PROJECT_ROOT_DIR}/device/cube/Aura")
     set(startup_file "${cube_generated_files_dir}/startup_stm32l432xx.s")
-    set(clang_init_file "${PROJECT_ROOT_DIR}/device/clang_init.c")
 
-    add_library(device_specific STATIC ${startup_file} ${clang_init_file})
+    add_library(device_specific STATIC ${startup_file})
 
 endfunction()
 
