@@ -32,7 +32,9 @@ string(CONCAT basic_flags
     " -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16"
     " -nodefaultlibs"
     " --sysroot=${ARM_GNU_TOOLCHAIN_PATH}/arm-none-eabi"
-    " -flto")
+    " -flto"
+    " -fno-pic"
+    )
 
 set(object_file_generation_flags "-fdata-sections -ffunction-sections")
 set(compile_c_flags "${basic_flags} ${object_file_generation_flags}")
