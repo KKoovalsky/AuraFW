@@ -59,6 +59,7 @@ def drive_device_test(port, baud_rate, pass_regex):
                 raise RuntimeError(
                     'Timeout waiting for a match from serial output!')
             echo(line.rstrip())
+            exit_if_uncaught_exception_error(line)
             if pass_regex is None:
                 exit_if_tests_finished(line)
             else:
@@ -100,6 +101,11 @@ def exit_if_tests_finished(line: str):
             raise RuntimeError('ERROR: Found {} failed tests!'.format(failures))
         else:
             exit(0)
+
+
+def exit_if_uncaught_exception_error(line: str):
+    if 'UNCAUGHT EXCEPTION' in line:
+        raise RuntimeError('ERROR: Uncaught exception within executable!')
 
 
 if __name__ == '__main__':
