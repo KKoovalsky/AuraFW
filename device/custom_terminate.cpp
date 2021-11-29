@@ -4,6 +4,9 @@
  * @author  Kacper Kowalski - kacper.s.kowalski@gmail.com
  */
 
+// Enable this only for GCC to avoid multiple definitions of symbol __cxxabiv1::__terminate_handler when using Clang.
+#ifndef __clang__
+
 #include <exception>
 
 [[noreturn]] void terminate() noexcept
@@ -16,3 +19,5 @@ namespace __cxxabiv1
 {
 std::terminate_handler __terminate_handler = terminate;
 }
+
+#endif
