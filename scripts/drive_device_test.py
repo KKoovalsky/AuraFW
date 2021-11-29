@@ -84,9 +84,9 @@ def echo(data):
     print(data)
 
 
-def exit_if_matches(regex: str, line: str):
+def exit_if_matches(regex: str, lines: str):
     prog = re.compile(regex, re.DOTALL | re.MULTILINE)
-    match = prog.search(line)
+    match = prog.search(lines)
     if match:
         exit(0)
 
