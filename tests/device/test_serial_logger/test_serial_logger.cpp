@@ -3,7 +3,6 @@
  * @brief   Tests the SerialLogger
  * @author  Kacper Kowalski - kacper.s.kowalski@gmail.com
  */
-#include "unity.h"
 
 #include "serial_logger.hpp"
 
