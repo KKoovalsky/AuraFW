@@ -21,7 +21,8 @@ function(LinkCustomTerminate target_name)
 endfunction()
 
 function(LinkDeviceSpecificDetails target_name)
-set(cube_generated_files_dir "${PROJECT_ROOT_DIR}/device/cube/Aura")
+
+    set(cube_generated_files_dir "${PROJECT_ROOT_DIR}/device/cube/Aura")
 
     set(linker_script "${cube_generated_files_dir}/STM32L432KCUx_FLASH.ld")
     target_link_options(${target_name} PRIVATE -T${linker_script})
