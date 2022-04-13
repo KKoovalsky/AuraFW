@@ -12,7 +12,7 @@ function(MakeDeviceExecutable target_name)
 
 endfunction()
 
-function(LinkCustomTerminate)
+function(LinkCustomTerminate target_name)
 
     set(device_dir "${PROJECT_ROOT_DIR}/device")
     set(custom_terminate_file "${device_dir}/custom_terminate.cpp")
