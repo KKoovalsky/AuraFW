@@ -29,6 +29,8 @@ function(LinkDeviceSpecificDetails target_name)
 
     target_link_libraries(${target_name} PRIVATE device_specific cube)
 
+    target_sources(${target_name} PRIVATE $<TARGET_OBJECTS:custom_alloc>)
+
 endfunction()
 
 function(GenerateHexAfterBuild target_name)
