@@ -36,7 +36,7 @@ endfunction()
 
 #! ArmGnu_GetCSystemIncludeFlags  Returns '-isystem' flags for C language as a string.
 # \arg:basic_architecture_flags   Basic architecture flags string, which contains -mcpu, -mfloat-abi, -mfpu, -mthumb, ...
-# \arg:result_out_var             Will be set to the resulting flags: '-isystem=some/path/1 -isystem=some/path/2 ...'
+# \arg:result_out_var             Will be set to the resulting flags: '-isystem some/path/1 -isystem some/path/2 ...'
 function(ArmGnu_GetCSystemIncludeFlags basic_architecture_flags result_out_var)
 
     ArmGnu__CreateDummyEmptyFile(dummy_empty_file_path)
@@ -56,7 +56,7 @@ endfunction()
 
 #! ArmGnu_GetCxxSystemIncludeFlags  Returns '-isystem' flags for C++ language as a string.
 # \arg:basic_architecture_flags     Basic architecture flags string, which contains -mcpu, -mfloat-abi, -mfpu, -mthumb, ...
-# \arg:result_out_var               Will be set to the resulting flags: '-isystem=some/path/1 -isystem=some/path/2 ...'
+# \arg:result_out_var               Will be set to the resulting flags: '-isystem some/path/1 -isystem some/path/2 ...'
 function(ArmGnu_GetCxxSystemIncludeFlags basic_architecture_flags result_out_var)
 
     ArmGnu__CreateDummyEmptyFile(dummy_empty_file_path)
@@ -64,6 +64,7 @@ function(ArmGnu_GetCxxSystemIncludeFlags basic_architecture_flags result_out_var
     set(cpp ${ARM_GNU_TOOLCHAIN_PATH}/bin/arm-none-eabi-cpp)
     separate_arguments(cmd NATIVE_COMMAND 
         "${cpp} ${basic_architecture_flags} -xc++ -v -E -")
+
     execute_process(COMMAND ${cmd} 
         OUTPUT_VARIABLE cmd_out
         ERROR_VARIABLE cmd_out
@@ -106,8 +107,8 @@ function(ArmGnu__ParseIncludeDirs cpp_verbose_command_output result_out_var)
     string(REGEX REPLACE "[ \t\r\n]" ";" includes ${includes})
     # Quoutes are needed with "${includes}", because the previous command made 'includes' variable a list.
     string(REGEX REPLACE ";+" ";" includes "${includes}")
-    list(JOIN includes " -isystem=" includes)
-    set(includes "-isystem=${includes}")
+    list(JOIN includes " -isystem " includes)
+    set(includes "-isystem ${includes}")
 
     set(${result_out_var} ${includes} PARENT_SCOPE)
 
