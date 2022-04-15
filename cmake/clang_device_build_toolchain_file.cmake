@@ -27,50 +27,53 @@ set(CMAKE_RANLIB ${CLANG_COMPILER_PATH_PREFIX}/llvm-ranlib)
 set(CMAKE_STRIP ${CLANG_COMPILER_PATH_PREFIX}/llvm-strip)
 set(CMAKE_SIZE_BIN ${CLANG_COMPILER_PATH_PREFIX}/llvm-size)
 
+set(basic_architecture_flags 
+    "-mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16")
+
 string(CONCAT basic_flags
     " -Wall -Wextra"
-    " -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16"
+    " ${basic_architecture_flags}"
     " -nodefaultlibs"
     " --sysroot=${ARM_GNU_TOOLCHAIN_PATH}/arm-none-eabi"
+    " -fdata-sections -ffunction-sections"
     " -flto"
-    " -fno-pic"
-    )
+)
 
-set(object_file_generation_flags "-fdata-sections -ffunction-sections")
-set(compile_c_flags "${basic_flags} ${object_file_generation_flags}")
+# try_compile() command will reevaluate the toolchain file, but with an on-the-side CMake invocation, thus the 
+# CMake CACHE variables will not be preserved. CMake provides a special variable CMAKE_TRY_COMPILE_PLATFORM_VARIABLES,
+# which allows to propagate the needed variables from the main build. The command below will be evaluated during
+# first inclusion of the toolchain file, so during each and every call to try_compile() it will be already set.
+list(APPEND CMAKE_TRY_COMPILE_PLATFORM_VARIABLES ARM_GNU_TOOLCHAIN_PATH)
 
-set(gcc_cxx_system_include_dir "${ARM_GNU_TOOLCHAIN_PATH}/arm-none-eabi/include/c++/${ARM_GNU_TOOLCHAIN_GCC_VERSION}/")
-set(gcc_cxx_cpu_specific_system_include_dir "${gcc_cxx_system_include_dir}/arm-none-eabi/thumb/v7e-m+fp/hard/")
-set(system_include_cxx_flags
-    "-isystem ${gcc_cxx_system_include_dir} -isystem ${gcc_cxx_cpu_specific_system_include_dir}")
-set(compile_cxx_flags "${compile_c_flags} ${system_include_cxx_flags}")
+include(${CMAKE_CURRENT_LIST_DIR}/arm_gnu_toolchain_utils.cmake)
+ArmGnu_GetCxxSystemIncludeFlags(${basic_architecture_flags} cxx_system_includes)
+ArmGnu_GetStandardLibrariesDirectory(${basic_architecture_flags} standard_libraries_dir)
+ArmGnu_GetCompilerRuntimeLibrariesDirectory(${basic_architecture_flags} compiler_runtime_libraries_dir)
 
-set(standard_libraries_dir "${ARM_GNU_TOOLCHAIN_PATH}/arm-none-eabi/lib/thumb/v7e-m+fp/hard/")
-set(libgcc_dir "${ARM_GNU_TOOLCHAIN_PATH}/lib/gcc/arm-none-eabi/${ARM_GNU_TOOLCHAIN_GCC_VERSION}/thumb/v7e-m+fp/hard/")
-string(CONCAT extra_linker_flags
+string(CONCAT exe_linker_flags
     " -Wl,--sysroot=${ARM_GNU_TOOLCHAIN_PATH}/arm-none-eabi"
-    " -Wl,--gc-sections -Wl,-Map=output.map"
+    " -Wl,--gc-sections"
+    " -Wl,-Map=output.map"
     " -Wl,-nostdlib"
     " -Wl,--target2=rel"
-    " -L${standard_libraries_dir} -L${libgcc_dir}"
+    " -L${standard_libraries_dir}"
+    " -L${compiler_runtime_libraries_dir}"
     # This order of linking is mandatory: https://gcc.gnu.org/onlinedocs/gccint/Initialization.html
-    " ${libgcc_dir}/crti.o"
-    " ${libgcc_dir}/crtbegin.o"
+    " ${compiler_runtime_libraries_dir}/crti.o"
+    " ${compiler_runtime_libraries_dir}/crtbegin.o"
     " ${standard_libraries_dir}/crt0.o"
     " -lc -lm -lg -lnosys -lstdc++ -lgcc"
-    " ${libgcc_dir}/crtend.o"
-    " ${libgcc_dir}/crtn.o"
+    " ${compiler_runtime_libraries_dir}/crtend.o"
+    " ${compiler_runtime_libraries_dir}/crtn.o"
     " -flto"
-    )
+)
 
-set(linker_flags "${basic_flags} ${extra_linker_flags}")
+set(CMAKE_C_FLAGS_INIT "${basic_flags}")
+set(CMAKE_ASM_FLAGS_INIT  "${basic_architecture_flags}")
+set(CMAKE_CXX_FLAGS_INIT "${basic_flags} ${cxx_system_includes}")
 
-set(CMAKE_C_FLAGS_INIT "${compile_c_flags}")
-set(CMAKE_ASM_FLAGS_INIT  "${basic_flags}")
-set(CMAKE_CXX_FLAGS_INIT "${compile_cxx_flags}")
+set(CMAKE_EXE_LINKER_FLAGS_INIT "${exe_linker_flags}")
 
-set(CMAKE_EXE_LINKER_FLAGS_INIT "${linker_flags}")
-
-set(CMAKE_C_COMPILER_TARGET armv7em-none-eabi)
-set(CMAKE_CXX_COMPILER_TARGET armv7em-none-eabi)
-set(CMAKE_ASM_COMPILER_TARGET armv7em-none-eabi)
+set(CMAKE_C_COMPILER_TARGET arm-none-eabi)
+set(CMAKE_CXX_COMPILER_TARGET arm-none-eabi)
+set(CMAKE_ASM_COMPILER_TARGET arm-none-eabi)
