@@ -33,8 +33,6 @@ set(basic_architecture_flags
 string(CONCAT basic_flags
     " -Wall -Wextra"
     " ${basic_architecture_flags}"
-    " -nodefaultlibs"
-    " --sysroot=${ARM_GNU_TOOLCHAIN_PATH}/arm-none-eabi"
     " -fdata-sections -ffunction-sections"
     " -flto"
 )
@@ -46,29 +44,33 @@ string(CONCAT basic_flags
 list(APPEND CMAKE_TRY_COMPILE_PLATFORM_VARIABLES ARM_GNU_TOOLCHAIN_PATH)
 
 include(${CMAKE_CURRENT_LIST_DIR}/arm_gnu_toolchain_utils.cmake)
+ArmGnu_GetCSystemIncludeFlags(${basic_architecture_flags} c_system_includes)
 ArmGnu_GetCxxSystemIncludeFlags(${basic_architecture_flags} cxx_system_includes)
 ArmGnu_GetStandardLibrariesDirectory(${basic_architecture_flags} standard_libraries_dir)
 ArmGnu_GetCompilerRuntimeLibrariesDirectory(${basic_architecture_flags} compiler_runtime_libraries_dir)
 
+include(${CMAKE_CURRENT_LIST_DIR}/llvm_toolchain_utils.cmake)
+Llvm_GetDummyLibunwindDirectory(libunwind_dir)
+
 string(CONCAT exe_linker_flags
-    " -Wl,--sysroot=${ARM_GNU_TOOLCHAIN_PATH}/arm-none-eabi"
-    " -Wl,--gc-sections"
-    " -Wl,-Map=output.map"
-    " -Wl,-nostdlib"
-    " -Wl,--target2=rel"
+    " --rtlib=libgcc"
+    " --stdlib=libstdc++"
     " -L${standard_libraries_dir}"
     " -L${compiler_runtime_libraries_dir}"
-    # This order of linking is mandatory: https://gcc.gnu.org/onlinedocs/gccint/Initialization.html
+    # This is a workaround for clang++ pulling libunwind, even though rtlib is libgcc. There is another command
+    # line option: --unwindlib={libgcc,none}, but clang++ ignores it both in version 13.0.0 and 14.0.0.
+    " -L${libunwind_dir}"
+    " -Wl,--gc-sections"
+    " -Wl,--target2=rel"
     " ${compiler_runtime_libraries_dir}/crti.o"
     " ${compiler_runtime_libraries_dir}/crtbegin.o"
     " ${standard_libraries_dir}/crt0.o"
-    " -lc -lm -lg -lnosys -lstdc++ -lgcc"
     " ${compiler_runtime_libraries_dir}/crtend.o"
     " ${compiler_runtime_libraries_dir}/crtn.o"
-    " -flto"
+    " -lnosys"
 )
 
-set(CMAKE_C_FLAGS_INIT "${basic_flags}")
+set(CMAKE_C_FLAGS_INIT "${basic_flags} ${c_system_includes}")
 set(CMAKE_ASM_FLAGS_INIT  "${basic_architecture_flags}")
 set(CMAKE_CXX_FLAGS_INIT "${basic_flags} ${cxx_system_includes}")
 
