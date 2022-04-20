@@ -7,7 +7,7 @@ file(REAL_PATH ${CMAKE_CURRENT_LIST_DIR}/../ PROJECT_ROOT_DIR)
 include(../cmake/dependencies.cmake)
 ProvideLlvm()
 ProvideArmGnuToolchain()
-set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_LIST_DIR}/../cmake/clang_device_build_toolchain_file.cmake CACHE PATH
+set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_LIST_DIR}/../cmake/clang_with_arm_gnu_libs_device_toolchain.cmake CACHE PATH
     "Path to the CMake's toolchain file")
 
 project(AuraDevice LANGUAGES CXX C ASM)
