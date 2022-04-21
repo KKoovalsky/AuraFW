@@ -17,8 +17,6 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
-file(REAL_PATH ${CMAKE_SOURCE_DIR}/../.. PROJECT_ROOT_DIR)
-
 include(static_code_analysis)
 
 add_subdirectory(../common common)

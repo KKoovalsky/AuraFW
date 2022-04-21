@@ -63,7 +63,7 @@ function(AddDeviceTest target_name test_name)
     add_test(NAME ${flasher}
              COMMAND ${CMAKE_COMMAND} --build . --target ${target_name}-flash_no_run)
 
-    set(test_driver ${PROJECT_ROOT_DIR}/../scripts/drive_device_test.py)
+     set(test_driver ${AURA_DIR_OF_DEVICE_TESTS_CMAKE}/../scripts/drive_device_test.py)
 
     if(DEVICE_TEST_PASS_REGEX)
         set(custom_pass_regex_cmd_arg --pass_regex ${DEVICE_TEST_PASS_REGEX})
@@ -113,7 +113,7 @@ function(GenerateTestRunnerOnTestExecutableRebuild target_name is_unity_output_d
     set(test_filename ${target_name}.cpp)
     find_file(test_file ${test_filename} PATHS ${CMAKE_CURRENT_SOURCE_DIR} REQUIRED NO_DEFAULT_PATH NO_CACHE)
 
-    set(post_generation_test_runner_fixer ${PROJECT_ROOT_DIR}/../scripts/fix_test_runner_after_generation.py)
+    set(post_generation_test_runner_fixer ${AURA_DIR_OF_DEVICE_TESTS_CMAKE}/../scripts/fix_test_runner_after_generation.py)
 
     add_custom_command(OUTPUT ${test_runner_filename}
         # Test runner generator will copy all the "include" lines to the generated file. This is unwanted. We use
@@ -147,7 +147,7 @@ function(AddSanitizerForSerialPortDefined)
     set(AURA_SERIAL_PORT "" CACHE STRING
         "Serial port on which logs are collected from Aura (e.g. /dev/ttyUSB1 or COM3)")
 
-    set(sanitizer ${PROJECT_ROOT_DIR}/../cmake/sanitize_variable_not_empty.cmake)
+    set(sanitizer ${AURA_DIR_OF_DEVICE_TESTS_CMAKE}/sanitize_variable_not_empty.cmake)
 
     string(CONCAT error_message
         "CMake CACHE variable AURA_SERIAL_PORT undefined. "
@@ -170,4 +170,8 @@ endfunction()
 # Main script
 ##########################################################################################
 
+# Save for later when the functions from this module are used from another CMake files.
+set(AURA_DIR_OF_DEVICE_TESTS_CMAKE ${CMAKE_CURRENT_LIST_DIR})
+
 AddSanitizerForSerialPortDefined()
+

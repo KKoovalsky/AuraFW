@@ -14,7 +14,7 @@ endfunction()
 
 function(LinkCustomTerminate target_name)
 
-    set(device_dir "${PROJECT_ROOT_DIR}/device")
+    set(device_dir "${AURA_PROJECT_ROOT_DIR_FOR_DEVICE_EXECUTABLE_CMAKE}/src/device")
     set(custom_terminate_file "${device_dir}/custom_terminate.cpp")
     target_sources(${target_name} PRIVATE ${custom_terminate_file})
 
@@ -22,7 +22,7 @@ endfunction()
 
 function(LinkDeviceSpecificDetails target_name)
 
-    set(cube_generated_files_dir "${PROJECT_ROOT_DIR}/device/cube/Aura")
+    set(cube_generated_files_dir "${AURA_PROJECT_ROOT_DIR_FOR_DEVICE_EXECUTABLE_CMAKE}/src/device/cube/Aura")
 
     set(linker_script "${cube_generated_files_dir}/STM32L432KCUx_FLASH.ld")
     target_link_options(${target_name} PRIVATE -T${linker_script})
@@ -73,11 +73,11 @@ endfunction()
 
 function(CreateDeviceSpecificLibraries)
 
-    set(cube_generated_files_dir "${PROJECT_ROOT_DIR}/device/cube/Aura")
+    set(cube_generated_files_dir "${AURA_PROJECT_ROOT_DIR_FOR_DEVICE_EXECUTABLE_CMAKE}/src/device/cube/Aura")
     set(startup_file "${cube_generated_files_dir}/startup_stm32l432xx.s")
     add_library(device_specific STATIC ${startup_file})
 
-    set(device_dir "${PROJECT_ROOT_DIR}/device")
+    set(device_dir "${AURA_PROJECT_ROOT_DIR_FOR_DEVICE_EXECUTABLE_CMAKE}/src/device")
     set(custom_alloc_file ${device_dir}/custom_alloc.c)
     add_library(custom_alloc OBJECT ${custom_alloc_file})
 
@@ -86,4 +86,7 @@ endfunction()
 ##########################################################################################
 # Main script
 ##########################################################################################
+
+set(AURA_PROJECT_ROOT_DIR_FOR_DEVICE_EXECUTABLE_CMAKE ${CMAKE_CURRENT_LIST_DIR}/..)
+
 CreateDeviceSpecificLibraries()

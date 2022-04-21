@@ -81,8 +81,8 @@ function(FindAndEnableClangTidyOrWarnIfNotFound)
         return()
     endif()
 
-
-    set(project_sources_regex "(^${PROJECT_ROOT_DIR}/src.*)|(^${PROJECT_ROOT_DIR}/tests.*)")
+    set(root_dir ${CMAKE_CURRENT_LIST_DIR}/..)
+    set(project_sources_regex "(^${root_dir}/src.*)|(^${root_dir}/tests.*)")
     add_test(
         NAME clang_tidy_static_analysis
         COMMAND ${run_clang_tidy}
