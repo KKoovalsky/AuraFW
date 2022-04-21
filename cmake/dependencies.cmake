@@ -1,16 +1,6 @@
 function(ProvideCatch2)
 
-    include(FetchContent)
-
-    FetchContent_Declare(
-      Catch2
-      GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-      GIT_TAG        4436a604566f18091489b55af215b8d32afe657a)
-
-    # TODO: PREFIX, subbuild and src (expect build) can be the same for host and the device build. We need to check out
-    # what is subbuild and whether it is system dependent. See how is PREFIX, SUBBUILD_DIR, ... used in ProvideLlvm()
-
-    FetchContent_MakeAvailable(Catch2)
+    find_package(Catch2 3 REQUIRED)
 
 endfunction()
 
