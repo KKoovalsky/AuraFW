@@ -18,7 +18,7 @@ function(ProvideLlvm)
 
     include(FetchContent)
 
-    set(COMMON_DEPENDENCIES_PATH ${CMAKE_SOURCE_DIR}/../build/common_dependencies)
+    set(COMMON_DEPENDENCIES_PATH ${CMAKE_SOURCE_DIR}/../../build/common_dependencies)
 
     FetchContent_Declare(
         Llvm
@@ -42,7 +42,7 @@ function(ProvideArmGnuToolchain)
 
     include(FetchContent)
 
-    set(COMMON_DEPENDENCIES_PATH ${CMAKE_SOURCE_DIR}/../build/common_dependencies)
+    set(COMMON_DEPENDENCIES_PATH ${CMAKE_SOURCE_DIR}/../../build/common_dependencies)
 
     FetchContent_Declare(
         ArmGnuToolchain
