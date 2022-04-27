@@ -2,6 +2,17 @@
 # Function definitions
 ##########################################################################################
 
+#! AddDeviceExecutable Wrapper for add_executable() to create proper, flashable device executable. 
+# 
+# This function uses the same API as add_executable(), so the first argument is the executable name and the
+# rest are the source files forwareded to add_executable().
+function(AddDeviceExecutable target_name)
+
+    add_executable(${target_name} ${ARGN})
+    MakeDeviceExecutable(${target_name})
+
+endfunction()
+
 function(MakeDeviceExecutable target_name)
 
     LinkDeviceSpecificDetails(${target_name})

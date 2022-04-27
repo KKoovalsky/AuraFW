@@ -34,8 +34,7 @@ add_subdirectory(../common common)
 add_subdirectory(cube)
 add_subdirectory(serial_logger)
 
-add_executable(firmware main.cpp)
-MakeDeviceExecutable(firmware)
+AddDeviceExecutable(firmware main.cpp)
 
 enable_testing()
 add_subdirectory(../../tests/device tests/device)
