@@ -48,29 +48,22 @@ function(ProvideArmGnuToolchain)
 
 endfunction()
 
-function(DownloadAndPopulateJunglesCMakeHelpers)
-
-    include(FetchContent)
-
-    FetchContent_Declare(
-        cmake_helpers
-        GIT_REPOSITORY https://github.com/KKoovalsky/CMakeHelpers.git
-        GIT_TAG e81be067115c349a55715e325ebed98795d55cfa
-        SOURCE_DIR    ${DEPENDENCIES_DIR_FOR_DEPENDENCIES_CMAKE}/cmake_helpers-src
-    )
-    FetchContent_MakeAvailable(cmake_helpers)
-
-endfunction()
-
-
 function(ProvideFreertos)
 
-    JunglesHelpers_DownloadAndPopulateFreeRTOSKernel(freertos V10.4.3 heap_4)
-    target_include_directories(freertos PUBLIC ${FREERTOS_SOURCE_DIR}/portable/GCC/ARM_CM4F)
-    target_sources(freertos PUBLIC ${FREERTOS_SOURCE_DIR}/portable/GCC/ARM_CM4F/port.c)
+    file(GLOB_RECURSE freertos_config_file ${PROJECT_ROOT_FOR_DEPENDENCIES_CMAKE}/src/*FreeRTOSConfig.h)
+    get_filename_component(freertos_config_file_dir "${freertos_config_file}" DIRECTORY)
 
-    # freertos_config shall be supplied externally. It shall contain at least include path to the FreeRTOSConfig.h.
-    target_link_libraries(freertos PUBLIC freertos_config)
+    set(FREERTOS_HEAP "4" CACHE STRING "FreeRTOS heap model number. 1 .. 5. Or absolute path to custom heap source file")
+    set(FREERTOS_CONFIG_FILE_DIRECTORY "${freertos_config_file_dir}" CACHE STRING "Absolute path to the directory with FreeRTOSConfig.h")
+    set(FREERTOS_PORT "GCC_ARM_CM4F" CACHE STRING "FreeRTOS port name")
+
+    include(FetchContent)
+    FetchContent_Declare(freertos_kernel_sources
+        GIT_REPOSITORY https://github.com/FreeRTOS/FreeRTOS-Kernel.git
+        GIT_TAG cf6850583c7c7b69726531dd56fa0264159f1750
+        SOURCE_DIR ${DEPENDENCIES_DIR_FOR_DEPENDENCIES_CMAKE}/freertos_kernel_sources-src
+    )
+    FetchContent_MakeAvailable(freertos_kernel_sources)
 
 endfunction()
 
@@ -100,7 +93,7 @@ function(ProvideJunglesOsHelpers)
     )
 
     FetchContent_MakeAvailable(JunglesOsHelpers)
-    target_link_libraries(JunglesOsHelpers INTERFACE freertos)
+    target_link_libraries(JunglesOsHelpers INTERFACE freertos_kernel)
 
 endfunction()
 

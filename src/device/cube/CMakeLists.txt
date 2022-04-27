@@ -11,7 +11,4 @@ target_include_directories(cube PUBLIC
     Aura/Drivers/CMSIS/Include
     ${cmsis_os_dir}
 )
-target_link_libraries(cube PRIVATE freertos)
-
-add_library(freertos_config INTERFACE)
-target_include_directories(freertos_config INTERFACE Aura/Core/Inc)
+target_link_libraries(cube PRIVATE freertos_kernel)

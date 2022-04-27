@@ -22,7 +22,6 @@ set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED OFF)
 set(CMAKE_C_EXTENSIONS ON)
 
-DownloadAndPopulateJunglesCMakeHelpers()
 ProvideFreertos()
 ProvideJunglesOsHelpers()
 
