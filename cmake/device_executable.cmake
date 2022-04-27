@@ -4,19 +4,10 @@
 
 function(MakeDeviceExecutable target_name)
 
-    LinkCustomTerminate(${target_name})
     LinkDeviceSpecificDetails(${target_name})
     GenerateHexAfterBuild(${target_name})
     PrintBinarySizeAfterBuild(${target_name})
     AddFlashTargets(${target_name})
-
-endfunction()
-
-function(LinkCustomTerminate target_name)
-
-    set(device_dir "${AURA_PROJECT_ROOT_DIR_FOR_DEVICE_EXECUTABLE_CMAKE}/src/device")
-    set(custom_terminate_file "${device_dir}/custom_terminate.cpp")
-    target_sources(${target_name} PRIVATE ${custom_terminate_file})
 
 endfunction()
 
@@ -29,7 +20,7 @@ function(LinkDeviceSpecificDetails target_name)
 
     target_link_libraries(${target_name} PRIVATE device_specific cube)
 
-    target_sources(${target_name} PRIVATE $<TARGET_OBJECTS:custom_alloc>)
+    target_sources(${target_name} PRIVATE $<TARGET_OBJECTS:device_specific>)
 
 endfunction()
 
@@ -75,11 +66,12 @@ function(CreateDeviceSpecificLibraries)
 
     set(cube_generated_files_dir "${AURA_PROJECT_ROOT_DIR_FOR_DEVICE_EXECUTABLE_CMAKE}/src/device/cube/Aura")
     set(startup_file "${cube_generated_files_dir}/startup_stm32l432xx.s")
-    add_library(device_specific STATIC ${startup_file})
 
     set(device_dir "${AURA_PROJECT_ROOT_DIR_FOR_DEVICE_EXECUTABLE_CMAKE}/src/device")
     set(custom_alloc_file ${device_dir}/custom_alloc.c)
-    add_library(custom_alloc OBJECT ${custom_alloc_file})
+    set(custom_terminate_file "${device_dir}/custom_terminate.cpp")
+
+    add_library(device_specific OBJECT ${startup_file} ${custom_alloc_file} ${custom_terminate_file})
 
 endfunction()
 
