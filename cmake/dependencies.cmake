@@ -8,16 +8,14 @@ function(ProvideLlvm)
 
     include(FetchContent)
 
-    set(COMMON_DEPENDENCIES_PATH ${CMAKE_SOURCE_DIR}/../../build/common_dependencies)
-
     FetchContent_Declare(
         Llvm
         URL https://github.com/llvm/llvm-project/releases/download/llvmorg-13.0.0/clang+llvm-13.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz
         URL_HASH SHA256=2c2fb857af97f41a5032e9ecadf7f78d3eff389a5cd3c9ec620d24f134ceb3c8
-        PREFIX ${COMMON_DEPENDENCIES_PATH}
-        SUBBUILD_DIR ${COMMON_DEPENDENCIES_PATH}/llvm-subbuild
-        SOURCE_DIR ${COMMON_DEPENDENCIES_PATH}/llvm-src
-        BINARY_DIR ${COMMON_DEPENDENCIES_PATH}/llvm-build
+        PREFIX ${DEPENDENCIES_DIR_FOR_DEPENDENCIES_CMAKE}
+        SUBBUILD_DIR ${DEPENDENCIES_DIR_FOR_DEPENDENCIES_CMAKE}/llvm-subbuild
+        SOURCE_DIR ${DEPENDENCIES_DIR_FOR_DEPENDENCIES_CMAKE}/llvm-src
+        BINARY_DIR ${DEPENDENCIES_DIR_FOR_DEPENDENCIES_CMAKE}/llvm-build
     )
 
     FetchContent_MakeAvailable(Llvm)
@@ -32,16 +30,14 @@ function(ProvideArmGnuToolchain)
 
     include(FetchContent)
 
-    set(COMMON_DEPENDENCIES_PATH ${CMAKE_SOURCE_DIR}/../../build/common_dependencies)
-
     FetchContent_Declare(
         ArmGnuToolchain
         URL https://developer.arm.com/-/media/Files/downloads/gnu-rm/10.3-2021.10/gcc-arm-none-eabi-10.3-2021.10-x86_64-linux.tar.bz2
         URL_HASH MD5=2383e4eb4ea23f248d33adc70dc3227e
-        PREFIX ${COMMON_DEPENDENCIES_PATH}
-        SUBBUILD_DIR ${COMMON_DEPENDENCIES_PATH}/armgnutoolchain-subbuild
-        SOURCE_DIR ${COMMON_DEPENDENCIES_PATH}/armgnutoolchain-src
-        BINARY_DIR ${COMMON_DEPENDENCIES_PATH}/armgnutoolchain-build
+        PREFIX ${DEPENDENCIES_DIR_FOR_DEPENDENCIES_CMAKE}
+        SUBBUILD_DIR ${DEPENDENCIES_DIR_FOR_DEPENDENCIES_CMAKE}/armgnutoolchain-subbuild
+        SOURCE_DIR ${DEPENDENCIES_DIR_FOR_DEPENDENCIES_CMAKE}/armgnutoolchain-src
+        BINARY_DIR ${DEPENDENCIES_DIR_FOR_DEPENDENCIES_CMAKE}/armgnutoolchain-build
     )
 
     FetchContent_MakeAvailable(ArmGnuToolchain)
@@ -60,6 +56,7 @@ function(DownloadAndPopulateJunglesCMakeHelpers)
         cmake_helpers
         GIT_REPOSITORY https://github.com/KKoovalsky/CMakeHelpers.git
         GIT_TAG e81be067115c349a55715e325ebed98795d55cfa
+        SOURCE_DIR    ${DEPENDENCIES_DIR_FOR_DEPENDENCIES_CMAKE}/cmake_helpers-src
     )
     FetchContent_MakeAvailable(cmake_helpers)
 
@@ -83,6 +80,7 @@ function(ProvideUnity)
     FetchContent_Declare(unity_project
         GIT_REPOSITORY https://github.com/ThrowTheSwitch/Unity.git
         GIT_TAG v2.5.2
+        SOURCE_DIR ${DEPENDENCIES_DIR_FOR_DEPENDENCIES_CMAKE}/unity_project-src
     )
     FetchContent_MakeAvailable(unity_project)
 
@@ -98,9 +96,13 @@ function(ProvideJunglesOsHelpers)
     FetchContent_Declare(JunglesOsHelpers
         GIT_REPOSITORY https://github.com/KKoovalsky/JunglesOsHelpers.git
         GIT_TAG d0644fbb6eacbef5190a1c85f5640a3df60abb9b
+        SOURCE_DIR    ${DEPENDENCIES_DIR_FOR_DEPENDENCIES_CMAKE}/junglesoshelpers-src
     )
 
     FetchContent_MakeAvailable(JunglesOsHelpers)
     target_link_libraries(JunglesOsHelpers INTERFACE freertos)
 
 endfunction()
+
+set(PROJECT_ROOT_FOR_DEPENDENCIES_CMAKE ${CMAKE_CURRENT_LIST_DIR}/..)
+set(DEPENDENCIES_DIR_FOR_DEPENDENCIES_CMAKE ${PROJECT_ROOT_FOR_DEPENDENCIES_CMAKE}/.deps)

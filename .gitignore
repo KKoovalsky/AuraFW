@@ -3,3 +3,6 @@ build/
 # Vim files
 *.swp
 tags
+
+# Dependencies
+.deps/
