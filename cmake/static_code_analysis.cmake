@@ -20,12 +20,21 @@ function(EnableClangStaticAnalysis)
     # Runs the analysis from the path created specifically for that task
     add_custom_target(clang_static_analysis
         # scan-build wants Debug build, for better analysis.
-        COMMAND ${scan_build} ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} -DCMAKE_BUILD_TYPE=Debug
+        COMMAND ${scan_build} 
+            --use-cc ${CMAKE_C_COMPILER}
+            --use-c++ ${CMAKE_CXX_COMPILER}
+            --analyzer-target arm-none-eabi
+            ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} -DCMAKE_BUILD_TYPE=Debug -DFETCHCONTENT_FULLY_DISCONNECTED=ON
         COMMAND ${scan_build}
-                    -v -v -o ${reports_path} 
-                    -enable-checker optin.cplusplus.UninitializedObject 
-                    -enable-checker optin.cplusplus.VirtualCall
-                    ${CMAKE_COMMAND} --build .
+            --use-cc ${CMAKE_C_COMPILER}
+            --use-c++ ${CMAKE_CXX_COMPILER}
+            --analyzer-target arm-none-eabi
+            --exclude ${PROJECT_ROOT_DIR_FOR_STATIC_CODE_ANALYSIS_CMAKE}/.deps
+            --status-bugs
+            -v -v -o ${reports_path} 
+            -enable-checker optin.cplusplus.UninitializedObject 
+            -enable-checker optin.cplusplus.VirtualCall
+            ${CMAKE_COMMAND} --build .
         WORKING_DIRECTORY ${on_side_build_path}
     )
     
@@ -95,6 +104,8 @@ function(FindAndEnableClangTidyOrWarnIfNotFound)
     set_tests_properties(clang_tidy_static_analysis PROPERTIES LABELS StaticCodeAnalysis)
 
 endfunction()
+
+set(PROJECT_ROOT_DIR_FOR_STATIC_CODE_ANALYSIS_CMAKE ${CMAKE_CURRENT_LIST_DIR}/..)
 
 EnableClangStaticAnalysis()
 FindAndEnableCppCheckOrWarnIfNotFound()
