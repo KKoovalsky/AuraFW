@@ -25,7 +25,7 @@ function(CreateSerialLoggerTestExpectingOutput test_name expected_output_regex)
 
     AddDeviceTest(${test_target_name} ${test_name} PASS_REGEX ${expected_output_regex})
 
-    set_tests_properties(${test_name} PROPERTIES LABELS serial_logger)
+    set_tests_properties(${test_name} PROPERTIES LABELS SerialLogger)
 
 endfunction()
 
@@ -33,7 +33,7 @@ function(CreateTestSerialLoggerWorksWithUnity)
 
     add_executable(test_serial_logger_works_with_unity test_serial_logger_works_with_unity.cpp)
     ToDeviceTest(test_serial_logger_works_with_unity test_serial_logger_works_with_unity)
-    set_tests_properties(test_serial_logger_works_with_unity PROPERTIES LABELS serial_logger)
+    set_tests_properties(test_serial_logger_works_with_unity PROPERTIES LABELS SerialLogger)
 
 endfunction()
 
@@ -46,7 +46,7 @@ function(CreateTestUncaughtExceptionIsProperlyLogged)
         "UNCAUGHT EXCEPTION: some exception message!"
     )
 
-    set_tests_properties(logs_uncaught_exception PROPERTIES LABELS serial_logger)
+    set_tests_properties(logs_uncaught_exception PROPERTIES LABELS SerialLogger)
 
 endfunction()
 
