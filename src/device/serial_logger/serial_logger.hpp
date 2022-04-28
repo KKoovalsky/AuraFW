@@ -22,6 +22,8 @@ class SerialLogger
         ~SerialLoggerProxy();
 
         SerialLoggerProxy& operator<<(std::string);
+        SerialLoggerProxy& operator<<(std::string_view);
+        SerialLoggerProxy& operator<<(const char*);
         SerialLoggerProxy& operator<<(char);
         SerialLoggerProxy& operator<<(unsigned char);
         SerialLoggerProxy& operator<<(float);
@@ -38,6 +40,8 @@ class SerialLogger
                 return "WARNING: ";
             case LogLevel::error:
                 return "ERROR: ";
+            default:
+                return "";
             }
         }
 
