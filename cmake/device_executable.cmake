@@ -49,7 +49,7 @@ endfunction()
 function(PrintBinarySizeAfterBuild target_name)
 
     add_custom_command(TARGET ${target_name} POST_BUILD
-        COMMAND ${CMAKE_SIZE_BIN} $<TARGET_FILE:${target_name}>
+        COMMAND ${CMAKE_SIZE} $<TARGET_FILE:${target_name}>
         COMMENT "Section sizes of the executable binary"
     )
 
