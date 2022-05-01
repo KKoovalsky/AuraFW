@@ -1,6 +1,6 @@
 set(CLANG_COMPILER_PATH_PREFIX ${LLVM_TOOLCHAIN_PATH}/bin)
 
-# Without that you will get linking error related to no _exit symbol when CMake tests gcc compile.
+# Without that you will get linking error related to no _exit symbol when CMake tests the compiler.
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
 set(CMAKE_SYSTEM_NAME Generic)
