@@ -113,3 +113,10 @@ function(ArmGnu__ParseIncludeDirs cpp_verbose_command_output result_out_var)
     set(${result_out_var} ${includes} PARENT_SCOPE)
 
 endfunction()
+
+if(NOT ARM_GNU_TOOLCHAIN_PATH)
+    message(FATAL_ERROR 
+        " The utilities require ARM_GNU_TOOLCHAIN_PATH to be set to the root path of the ARM GNU Toolchain. "
+        " If this script is included from the toolchain file, remember to append ARM_GNU_TOOLCHAIN_PATH to "
+        " CMAKE_TRY_COMPILE_PLATFORM_VARIABLES within the toolchain file.")
+endif()
