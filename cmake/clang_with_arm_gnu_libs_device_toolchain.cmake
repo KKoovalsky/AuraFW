@@ -63,7 +63,6 @@ string(CONCAT exe_linker_flags
     " -Wl,--target2=rel"
     " ${compiler_runtime_libraries_dir}/crti.o"
     " ${compiler_runtime_libraries_dir}/crtbegin.o"
-    " ${standard_libraries_dir}/crt0.o"
     " ${compiler_runtime_libraries_dir}/crtend.o"
     " ${compiler_runtime_libraries_dir}/crtn.o"
     " -lnosys"
