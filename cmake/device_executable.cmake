@@ -27,7 +27,7 @@ function(LinkDeviceSpecificDetails target_name)
     set(cube_generated_files_dir "${AURA_PROJECT_ROOT_DIR_FOR_DEVICE_EXECUTABLE_CMAKE}/src/device/cube/Aura")
 
     set(linker_script "${cube_generated_files_dir}/STM32L432KCUx_FLASH.ld")
-    target_link_options(${target_name} PRIVATE -T${linker_script})
+    target_link_options(${target_name} PRIVATE -T${linker_script} -Wl,-Map=${target_name}.map)
 
     target_link_libraries(${target_name} PRIVATE device_specific cube)
 
