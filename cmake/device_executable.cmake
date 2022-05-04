@@ -80,7 +80,7 @@ function(CreateDeviceSpecificLibraries)
 
     set(device_dir "${AURA_PROJECT_ROOT_DIR_FOR_DEVICE_EXECUTABLE_CMAKE}/src/device")
     set(custom_alloc_file ${device_dir}/custom_alloc.c)
-    set(custom_terminate_file "${device_dir}/custom_terminate.cpp")
+    set(custom_terminate_file ${device_dir}/custom_terminate.cpp)
 
     add_library(device_specific OBJECT ${startup_file} ${custom_alloc_file} ${custom_terminate_file})
 
