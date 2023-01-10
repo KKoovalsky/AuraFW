@@ -6,12 +6,18 @@
 #include "collector.hpp"
 #include "dummy_fakes.hpp"
 
+#include "app/basic_array_store.hpp"
+
 int main()
 {
-    DummyStore<DummyMeasurement, DummyPackage> store;
+    constexpr unsigned max_measurements{10};
+    using Store = BasicArrayStore<DummyMeasurement, max_measurements>;
+    using Package = Store::Package;
+
+    Store store;
     DummyMeasurer<DummyMeasurement> measurer;
-    DummySender<DummyPackage> sender;
-    Collector<DummyMeasurement, DummyPackage> collector{store, measurer, sender};
+    DummySender<Package> sender;
+    Collector<DummyMeasurement, Package> collector{store, measurer, sender};
 
     // TODO: We need a timer which counts measurement intervals, and dispatches the event.
     // TODO: We need a timer which counts sending intervals, and dispatches the event.
