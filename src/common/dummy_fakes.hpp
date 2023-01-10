@@ -35,6 +35,7 @@ struct DummyMeasurer : Measurer<T>
 {
     T measure() override
     {
+        return {};
     }
 };
 
