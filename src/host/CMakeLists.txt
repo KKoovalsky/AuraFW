@@ -5,9 +5,9 @@ set(CMAKE_BUILD_TYPE "Release" CACHE STRING "CMake build configuration")
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/../../cmake)
 include(dependencies)
 
-ProvideLlvm()
-set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_LIST_DIR}/../../cmake/clang_host_toolchain.cmake CACHE PATH
-    "Path to the CMake's toolchain file")
+# ProvideLlvm()
+# set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_LIST_DIR}/../../cmake/clang_host_toolchain.cmake CACHE PATH
+#     "Path to the CMake's toolchain file")
 
 project(AuraHost LANGUAGES CXX C ASM)
 
