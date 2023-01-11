@@ -1,6 +1,10 @@
 /**
  * @file        signal.hpp
  * @brief       Signal template, cross-platform.
+ *
+ * @note        It may be beneficial to use ImmediateDispatcher, if most of the Listeners are quick, but there is one,
+ *              or two, which may block the thread context for a long time. In such a case it would be good to dispatch
+ *              the async job within the long-running Listener's update() function itself.
  */
 #ifndef SIGNAL_HPP
 #define SIGNAL_HPP
@@ -11,10 +15,30 @@
 
 enum class DispatchPolicy
 {
-    //! Dispatch within a single call to the Dispatcher.
+    /** @brief Dispatch within a single call to the Dispatcher.
+     *
+     * It means that on notify() the Dispatcher will be called once, with a job of calling each Listener successively.
+     *
+     * It is useful when you want to avoid dispatching the event from the notifier thread context.
+     *
+     * Use it when all of the Listeners return quickly from update(), thus they don't occupy a lot of time, so the
+     * impression of immediate (and parallel) handling of the event by all the Listeners can be preserved.
+     *
+     * When ImmediateDispatcher is used with this policy, all the Listeners will be called immediately within the
+     * notify() function. (For ImmediateDispatcher the DispatchPolicy doesn't do anything).
+     */
     all_at_once,
 
-    //! Call the Dispatcher once for each Listener.
+    /** @brief Call the Dispatcher once for each Listener.
+     *
+     * It means that on notify() the Dispatcher will be called per each Listener, to run its update().
+     *
+     * Use it when you want to implement thread pool design pattern. It will allow to dispatch each update() in a
+     * separate runner.
+     *
+     * When ImmediateDispatcher is used with this policy, all the Listeners will be called immediately within the
+     * notify() function. (For ImmediateDispatcher the DispatchPolicy doesn't do anything).
+     */
     one_after_another
 };
 
