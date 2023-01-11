@@ -17,6 +17,11 @@ struct DummyPackage
 {
 };
 
+struct DummyEvent
+{
+    int value{0};
+};
+
 template<typename Measurement, typename Package>
 struct DummyStore : Store<Measurement, Package>
 {
