@@ -13,6 +13,8 @@
 #include <functional>
 #include <stdexcept>
 
+#include "interfaces/listener.hpp"
+
 enum class DispatchPolicy
 {
     /** @brief Dispatch within a single call to the Dispatcher.
@@ -40,13 +42,6 @@ enum class DispatchPolicy
      * notify() function. (For ImmediateDispatcher the DispatchPolicy doesn't do anything).
      */
     one_after_another
-};
-
-template<typename Event>
-struct Listener
-{
-    virtual void update(const Event&) = 0;
-    virtual ~Listener() = default;
 };
 
 static inline void ImmediateDispatcher(const std::function<void(void)>& dispatched_action)
