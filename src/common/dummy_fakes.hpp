@@ -47,7 +47,7 @@ struct DummyMeasurer : Measurer<T>
 template<typename T>
 struct DummySender : Sender<T>
 {
-    void send_async(T) override
+    void send(T) override
     {
     }
 };

@@ -8,7 +8,7 @@
 template<typename T>
 struct Sender
 {
-    virtual void send_async(T) = 0;
+    virtual void send(T) = 0;
     virtual ~Sender() = default;
 };
 
