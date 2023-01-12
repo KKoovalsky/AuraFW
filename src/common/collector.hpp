@@ -22,12 +22,9 @@ class Collector
   public:
     using Store_ = Store<Measurement, Package>;
     using Measurer_ = Measurer<Measurement>;
+    using Sender_ = Sender<Package>;
 
-    // FIXME: Telling explicitly that this is async breaks the rule of separation of concerns. The Collector does
-    // not only react to the events, but it also knows stuff about RT.
-    using NonBlockingSender = Sender<Package>;
-
-    explicit Collector(Store_& store, Measurer_& measurer, NonBlockingSender& sender) :
+    explicit Collector(Store_& store, Measurer_& measurer, Sender_& sender) :
         store{store}, measurer{measurer}, sender{sender}
     {
     }
@@ -47,7 +44,7 @@ class Collector
   private:
     Store_& store;
     Measurer_& measurer;
-    NonBlockingSender& sender;
+    Sender_& sender;
 };
 
 #endif /* COLLECTOR_HPP */
