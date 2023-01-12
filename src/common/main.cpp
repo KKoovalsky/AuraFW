@@ -10,7 +10,6 @@
 #include "app/basic_array_store.hpp"
 
 #include "utils/signal.hpp"
-#include "utils/signal_compile_time.hpp"
 
 struct DummyListener : Listener<DummyEvent>
 {
@@ -47,10 +46,6 @@ int main()
 
     signal.notify({.value = 10});
     signal.notify({.value = 20});
-
-    auto signal_compile_time{make_signal_with_compile_time_connections<DummyEvent>(l1, l2)};
-    signal_compile_time.notify({.value = 100});
-    signal_compile_time.notify({.value = 200});
 
     // TODO: We need a timer which counts measurement intervals, and dispatches the event.
     // TODO: We need a timer which counts sending intervals, and dispatches the event.
