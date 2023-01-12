@@ -19,6 +19,8 @@ set(CMAKE_CXX_EXTENSIONS ON)
 
 include(static_code_analysis)
 
+ProvideJunglesOsHelpers()
+
 add_subdirectory(../common common)
 
 enable_testing()

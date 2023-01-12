@@ -24,6 +24,7 @@ set(CMAKE_C_EXTENSIONS ON)
 
 ProvideFreertos()
 ProvideJunglesOsHelpers()
+target_link_libraries(JunglesOsHelpers INTERFACE freertos_kernel)
 
 include(static_code_analysis)
 include(device_executable)
