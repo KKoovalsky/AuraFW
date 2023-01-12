@@ -8,31 +8,30 @@
 #include <array>
 
 #include "interfaces/listener.hpp"
-#include "interfaces/notifiable.hpp"
 
 // TODO: Concept for the Listeners: all shall implement Listener interface!
 template<typename Event, typename... Listeners>
-struct SignalStdArrayBasedWithCompileTimeConnections : Notifiable<Event>
+struct SignalStdArrayBasedWithCompileTimeConnections
 {
     using Listener_ = Listener<Event>;
     static inline constexpr unsigned NumberOfListeners{sizeof...(Listeners)};
 
-    explicit SignalStdArrayBasedWithCompileTimeConnections(Listeners&... ls) : listeners{&ls...}
+    constexpr explicit SignalStdArrayBasedWithCompileTimeConnections(Listeners&... ls) : listeners{&ls...}
     {
     }
 
-    void notify(Event evt) override
+    void notify(Event evt) const
     {
         for (auto l : listeners)
             l->update(evt);
     }
 
   private:
-    std::array<Listener_*, NumberOfListeners> listeners{};
+    const std::array<Listener_*, NumberOfListeners> listeners{};
 };
 
 template<typename Event, typename... Listeners>
-inline auto make_signal_std_array_based_with_compile_time_connections(Listeners&... ls)
+inline constexpr auto make_signal_std_array_based_with_compile_time_connections(Listeners&... ls)
 {
     return SignalStdArrayBasedWithCompileTimeConnections<Event, Listeners...>(ls...);
 };

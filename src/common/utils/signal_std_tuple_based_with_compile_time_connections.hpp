@@ -7,30 +7,26 @@
 
 #include <tuple>
 
-#include "interfaces/notifiable.hpp"
-
 // TODO: Concept for the Listeners: all shall implement update(Event)
 template<typename Event, typename... Listeners>
-struct SignalStdTupleBasedWithCompileTimeConnections : Notifiable<Event>
+struct SignalStdTupleBasedWithCompileTimeConnections
 {
-    static inline constexpr unsigned NumberOfListeners{sizeof...(Listeners)};
-
-    explicit SignalStdTupleBasedWithCompileTimeConnections(Listeners&... ls) : listeners{&ls...}
+    constexpr explicit SignalStdTupleBasedWithCompileTimeConnections(Listeners&... ls) : listeners{&ls...}
     {
     }
 
-    void notify(Event evt) override
+    void notify(Event evt) const
     {
         // Call each listener
         std::apply([&evt](auto&... ls) { (..., ls->update(evt)); }, listeners);
     }
 
   private:
-    std::tuple<Listeners*...> listeners;
+    const std::tuple<Listeners*...> listeners;
 };
 
 template<typename Event, typename... Listeners>
-inline auto make_signal_std_tuple_based_with_compile_time_connections(Listeners&... ls)
+inline constexpr auto make_signal_std_tuple_based_with_compile_time_connections(Listeners&... ls)
 {
     return SignalStdTupleBasedWithCompileTimeConnections<Event, Listeners...>(ls...);
 };
