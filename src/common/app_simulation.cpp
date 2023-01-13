@@ -44,22 +44,66 @@ struct Sender
     }
 };
 
+template<typename Sender>
+struct SenderDecorator
+{
+    explicit SenderDecorator(Sender& sender) : sender{sender}
+    {
+    }
+
+    void send(Package&& package)
+    {
+        std::cout << "DECORATED SENDER" << std::endl;
+        sender.send(std::move(package));
+    }
+
+    Sender& sender;
+};
+
+template<typename Event, typename Signal>
+struct SignalDecorator
+{
+    explicit SignalDecorator(Signal& signal) : signal{signal}
+    {
+    }
+
+    void notify(Event evt)
+    {
+        std::cout << "DECORATED SIGNAL" << std::endl;
+        signal.notify(std::move(evt));
+    }
+
+    Signal& signal;
+};
+
+struct Backgrounder
+{
+    void notify(Event::MeasurementInterval evt)
+    {
+    }
+};
+
 int main()
 {
     Store_ store;
     Measurer measurer;
     Sender sender;
-    CollectorWhichUsesStaticPolymporphizm<Measurement, Package, Store_, Measurer, Sender> collector{
-        store, measurer, sender};
+
+    SenderDecorator sender_decorator{sender};
+    CollectorWhichUsesStaticPolymporphizm<Measurement, Package, Store_, Measurer, decltype(sender_decorator)> collector{
+        store, measurer, sender_decorator};
 
     SignalStdTupleBasedWithCompileTimeConnections<Event::MeasurementInterval, decltype(collector)>
         measurement_interval_signal{collector};
     SignalStdTupleBasedWithCompileTimeConnections<Event::SendingInterval, decltype(collector)> sending_interval_signal{
         collector};
 
+    SignalDecorator<Event::MeasurementInterval, decltype(measurement_interval_signal)>
+        measurement_interval_signal_decorator{measurement_interval_signal};
+
     for (unsigned i{0}; i < 10; ++i)
     {
-        measurement_interval_signal.notify({});
+        measurement_interval_signal_decorator.notify({});
         if (i % 3 == 0)
             sending_interval_signal.notify({});
     }
