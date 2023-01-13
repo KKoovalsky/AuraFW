@@ -6,32 +6,37 @@
 #define BASIC_ARRAY_STORE_HPP
 
 #include <array>
+#include <iterator>
 #include <stdexcept>
+#include <vector>
 
 #include "interfaces/store.hpp"
 
 template<typename Measurement, unsigned MaxMeasurements>
-struct BasicArrayStore : Store<Measurement, std::array<Measurement, MaxMeasurements>>
+struct BasicArrayStore : Store<Measurement, std::vector<Measurement>>
 {
-    using Package = std::array<Measurement, MaxMeasurements>;
+    using Buffer = std::array<Measurement, MaxMeasurements>;
+    using Package = std::vector<Measurement>;
 
     void store(Measurement m) override
     {
-        if (idx == package.size())
+        if (idx == buffer.size())
             throw std::runtime_error{"Cannot store more measurements"};
 
-        package[idx++] = std::move(m);
+        buffer[idx++] = std::move(m);
     }
 
     //! Packages all the stored measurements, and remove the stored measurements.
     Package package_and_clear() override
     {
+        auto beg{std::cbegin(buffer)};
+        auto end{std::next(beg, idx)};
         idx = 0;
-        return package;
+        return Package(beg, end);
     }
 
   private:
-    Package package{};
+    Buffer buffer{};
     unsigned idx{0};
 };
 

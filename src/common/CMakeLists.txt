@@ -3,3 +3,6 @@ target_include_directories(aura_common INTERFACE ${CMAKE_CURRENT_LIST_DIR})
 
 add_executable(aura_simulation main.cpp)
 target_link_libraries(aura_simulation aura_common)
+
+add_executable(aura_simulation_with_static_polymorphizm app_simulation.cpp)
+target_link_libraries(aura_simulation_with_static_polymorphizm aura_common)
