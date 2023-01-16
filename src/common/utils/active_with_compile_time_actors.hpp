@@ -49,6 +49,12 @@ class Active
     Active(Active&&) noexcept = default;
     Active& operator=(Active&&) noexcept = default;
 
+  private:
+    struct Done
+    {
+    };
+
+  public:
     template<typename... Ts>
     explicit Active(Ts&&... as) : actors{std::forward<Ts>(as)...}
     {
@@ -57,7 +63,7 @@ class Active
 
     ~Active()
     {
-        // send([&] { done = true; });
+        send(Done{});
         thread.join();
     }
 
@@ -70,7 +76,7 @@ class Active
   private:
     // FIXME: Use remove_reference to be able to switch between reference and const-reference.
     using MessageTypes = std::tuple<typename util::function_traits<Actors>::template argument<0>...>;
-    using Message = std::variant<typename util::function_traits<Actors>::template argument<0>...>;
+    using Message = std::variant<Done, typename util::function_traits<Actors>::template argument<0>...>;
     using MessagePump = MessagePumpTemplate<Message>;
 
     void run()
@@ -81,9 +87,15 @@ class Active
             std::visit(
                 [&](auto&& arg) {
                     using T = std::decay_t<decltype(arg)>;
-                    constexpr unsigned ActorIndex{detail::get_index<T>(MessageTypes{})};
-                    auto& actor{std::get<ActorIndex>(actors)};
-                    actor(std::forward<decltype(arg)>(arg));
+                    if constexpr (std::is_same_v<T, Done>)
+                    {
+                        done = true;
+                    } else
+                    {
+                        constexpr unsigned ActorIndex{detail::get_index<T>(MessageTypes{})};
+                        auto& actor{std::get<ActorIndex>(actors)};
+                        actor(std::forward<decltype(arg)>(arg));
+                    }
                 },
                 std::move(msg));
         }
@@ -102,3 +114,4 @@ inline auto make_active_with_compile_time_actors(Actors&&... actors)
 }
 
 #endif /* ACTIVE_WITH_COMPILE_TIME_ACTORS_HPP */
+
