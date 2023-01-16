@@ -6,10 +6,33 @@
 #define ACTIVE_WITH_COMPILE_TIME_ACTORS_HPP
 
 #include <tuple>
+#include <type_traits>
 #include <utility>
 #include <variant>
 
 #include "utils/function_traits.hpp"
+
+namespace detail
+{
+template<typename T, typename U, typename... Us>
+static inline constexpr int get_index()
+{
+    if constexpr (std::is_same_v<T, U>)
+        return 0;
+    else
+    {
+        static_assert(sizeof...(Us) > 0, "Type not found in the tuple");
+        return get_index<T, Us...>() + 1;
+    }
+    return 0;
+}
+
+template<typename T, typename U, typename... Us>
+static inline constexpr int get_index(const std::tuple<U, Us...>&)
+{
+    return get_index<T, U, Us...>();
+}
+} // namespace detail
 
 // FIXME: Thread must be also a template, with a start() function that takes a lambda.
 template<typename Thread, template<typename> typename MessagePumpTemplate, typename... Actors>
@@ -56,8 +79,15 @@ class Active
     {
         while (!done)
         {
-            // auto msg{message_pump.receive()};
-            // msg(); // note: last message sets done to true
+            auto msg{message_pump.receive()};
+            std::visit(
+                [&](auto&& arg) {
+                    using T = std::decay_t<decltype(arg)>;
+                    constexpr unsigned ActorIndex{detail::get_index<T>(MessageTypes{})};
+                    auto& actor{std::get<ActorIndex>(actors)};
+                    actor(std::forward<decltype(arg)>(arg));
+                },
+                std::move(msg));
         }
     }
 

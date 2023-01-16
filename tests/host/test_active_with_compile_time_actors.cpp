@@ -14,10 +14,12 @@
 
 struct Event1
 {
+    int id{0};
 };
 
 struct Event2
 {
+    int id{0};
 };
 
 struct InvalidEvent
@@ -29,14 +31,12 @@ using Thread = jungles::native::thread;
 template<typename Message>
 using MessagePump = jungles::native::message_pump<Message>;
 
-TEST_CASE("", "[]") // NOLINT(cert-err58-cpp)
+TEST_CASE("Active runs job in parallel", "[ActiveWithCompileTimeActors]") // NOLINT(cert-err58-cpp)
 {
-    auto active{make_active_with_compile_time_actors<Thread, MessagePump>([](Event1) {}, [](Event2) {})};
-    active.send(Event1{});
-    active.send(Event2{});
-    // active.send(InvalidEvent{});
-    // Actor1 a1;
-    // ActiveWithCompileTimeActors<std::thread, MessagePump>
-    // ActiveWithCompileTimeActors active
-    // {[&](Event
+    // FIXME: Use rvalue references for parameters
+    auto active{make_active_with_compile_time_actors<Thread, MessagePump>(
+        [](Event1 e) { std::cout << "Handling Event1: " << e.id << std::endl; },
+        [](Event2 e) { std::cout << "Handling Event2: " << e.id << std::endl; })};
+    active.send(Event1{.id = 10});
+    active.send(Event2{.id = 20});
 }
