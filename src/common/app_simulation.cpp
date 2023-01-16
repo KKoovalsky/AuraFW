@@ -63,7 +63,7 @@ struct SignalDecorator {
 template <typename Event, typename Signal>
 struct SignalDecorator2 : Signal {
     template <typename... Args>
-    SignalDecorator2(Args&&... args) : Signal(std::forward<Args>(args)...) {}
+    explicit SignalDecorator2(Args&&... args) : Signal(std::forward<Args>(args)...) {}
 
     void notify(Event evt) {
         std::cout << "SIGNAL DECORATOR2" << std::endl;
