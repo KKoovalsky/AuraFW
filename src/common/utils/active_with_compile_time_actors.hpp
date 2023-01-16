@@ -44,8 +44,6 @@ class Active
 
     // FIXME: static_assert that Actors take unique types. Can be checked through MessageTypes!
 
-    // using Message = std::function<void()>;
-
     Active(const Active&) = delete;
     Active& operator=(const Active&) = delete;
     Active(Active&&) noexcept = default;
