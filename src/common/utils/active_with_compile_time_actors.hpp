@@ -15,7 +15,7 @@
 namespace detail
 {
 template<typename T, typename U, typename... Us>
-static inline constexpr int get_index()
+static inline constexpr unsigned get_index()
 {
     if constexpr (std::is_same_v<T, U>)
         return 0;
@@ -28,7 +28,7 @@ static inline constexpr int get_index()
 }
 
 template<typename T, typename U, typename... Us>
-static inline constexpr int get_index(const std::tuple<U, Us...>&)
+static inline constexpr unsigned get_index(const std::tuple<U, Us...>&)
 {
     return get_index<T, U, Us...>();
 }
