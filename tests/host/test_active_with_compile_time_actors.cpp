@@ -22,6 +22,10 @@ struct Event2
     int id{0};
 };
 
+struct Event3
+{
+};
+
 struct InvalidEvent
 {
 };
@@ -33,10 +37,16 @@ using MessagePump = jungles::native::message_pump<Message>;
 
 TEST_CASE("Active runs job in parallel", "[ActiveWithCompileTimeActors]") // NOLINT(cert-err58-cpp)
 {
+    std::string s{"YOLO"};
     // FIXME: Use rvalue references for parameters
     auto active{make_active_with_compile_time_actors<Thread, MessagePump>(
         [](Event1 e) { std::cout << "Handling Event1: " << e.id << std::endl; },
-        [](Event2 e) { std::cout << "Handling Event2: " << e.id << std::endl; })};
+        [](Event2 e) { std::cout << "Handling Event2: " << e.id << std::endl; },
+        [&s](Event3) {
+            std::cout << "Handling Event3: " << s << std::endl;
+            s = "HAHAHA";
+        })};
     active.send(Event1{.id = 10});
     active.send(Event2{.id = 20});
+    active.send(Event3{});
 }
