@@ -8,7 +8,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "jungles_os_helpers/native/message_pump.hpp"
-#include "jungles_os_helpers/native/thread.hpp"
+#include "jungles_os_helpers/native/thread2.hpp"
 
 #include "utils/active_with_compile_time_actors.hpp"
 
@@ -30,7 +30,8 @@ struct InvalidEvent
 {
 };
 
-using Thread = jungles::native::thread;
+template<auto MethodPointer>
+using Thread = jungles::native::thread2<MethodPointer>;
 
 template<typename Message>
 using MessagePump = jungles::native::message_pump<Message>;

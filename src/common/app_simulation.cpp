@@ -4,18 +4,26 @@
  */
 
 #include <iostream>
+#include <utility>
 
 #include "app/basic_array_store.hpp"
 #include "collector_using_static_polymorphizm.hpp"
 #include "events.hpp"
+#include "utils/active_with_compile_time_actors.hpp"
 #include "utils/signal_std_tuple_based_with_compile_time_connections.hpp"
 
-struct Measurement {
+#include "jungles_os_helpers/native/message_pump.hpp"
+#include "jungles_os_helpers/native/thread2.hpp"
+
+struct Measurement
+{
     unsigned id{0};
 };
 
-struct Measurer {
-    Measurement measure() {
+struct Measurer
+{
+    Measurement measure()
+    {
         auto id{measurement_id++};
         std::cout << "MEASURING: " << id << std::endl;
         return {.id = id};
@@ -28,19 +36,26 @@ static constexpr unsigned max_measurements{10};
 using Store_ = BasicArrayStore<Measurement, max_measurements>;
 using Package = Store_::Package;
 
-struct Sender {
-    void send(const Package& package) {
+struct Sender
+{
+    void send(const Package& package) // NOLINT
+    {
         std::cout << "SENDING: ";
-        for (auto e : package) std::cout << e.id << ", ";
+        for (auto e : package)
+            std::cout << e.id << ", ";
         std::cout << std::endl;
     }
 };
 
-template <typename Sender>
-struct SenderDecorator {
-    explicit SenderDecorator(Sender& sender) : sender{sender} {}
+template<typename Sender>
+struct SenderDecorator
+{
+    explicit SenderDecorator(Sender& sender) : sender{sender}
+    {
+    }
 
-    void send(Package&& package) {
+    void send(Package&& package)
+    {
         std::cout << "DECORATED SENDER" << std::endl;
         sender.send(std::move(package));
     }
@@ -48,11 +63,31 @@ struct SenderDecorator {
     Sender& sender;
 };
 
-template <typename Event, typename Signal>
-struct SignalDecorator {
-    explicit SignalDecorator(Signal& signal) : signal{signal} {}
+template<typename Sender>
+struct SenderDecorator2
+{
+    explicit SenderDecorator2(Sender&& s) : sender{std::move(s)}
+    {
+    }
 
-    void notify(Event evt) {
+    void send(Package&& package)
+    {
+        std::cout << "DECORATED2 SENDER" << std::endl;
+        sender.send(std::move(package));
+    }
+
+    Sender sender;
+};
+
+template<typename Event, typename Signal>
+struct SignalDecorator
+{
+    explicit SignalDecorator(Signal& signal) : signal{signal}
+    {
+    }
+
+    void notify(Event evt)
+    {
         std::cout << "DECORATED SIGNAL" << std::endl;
         signal.notify(std::move(evt));
     }
@@ -60,53 +95,63 @@ struct SignalDecorator {
     Signal& signal;
 };
 
-template <typename Event, typename Signal>
-struct SignalDecorator2 : Signal {
-    template <typename... Args>
-    explicit SignalDecorator2(Args&&... args) : Signal(std::forward<Args>(args)...) {}
+template<typename Event, typename Signal>
+struct SignalDecorator2 : Signal
+{
+    template<typename... Args>
+    explicit SignalDecorator2(Args&&... args) : Signal(std::forward<Args>(args)...)
+    {
+    }
 
-    void notify(Event evt) {
+    void notify(Event evt)
+    {
         std::cout << "SIGNAL DECORATOR2" << std::endl;
         static_cast<Signal*>(this)->notify(std::move(evt));
     }
 };
 
-struct Backgrounder {
-    void notify(Event::MeasurementInterval evt) {}
+struct Backgrounder
+{
+    void notify(Event::MeasurementInterval evt)
+    {
+    }
 };
 
-int main() {
+template<typename Event, typename... Listeners>
+using Signal = SignalStdTupleBasedWithCompileTimeConnections<Event, Listeners...>;
+
+template<auto MethodPointer>
+using Thread = jungles::native::thread2<MethodPointer>;
+
+template<typename Message>
+using MessagePump = jungles::native::message_pump<Message>;
+
+template<typename Measurement, typename Package, typename Store, typename Measurer, typename Sender>
+using Collector = CollectorWhichUsesStaticPolymporphizm<Measurement, Package, Store, Measurer, Sender>;
+
+int main()
+{
     Store_ store;
     Measurer measurer;
     Sender sender;
 
-    SenderDecorator sender_decorator{sender};
-    CollectorWhichUsesStaticPolymporphizm<Measurement, Package, Store_,
-                                          Measurer, decltype(sender_decorator)>
-        collector{store, measurer, sender_decorator};
+    SenderDecorator2 sender_decorator{Sender{}};
 
-    SignalStdTupleBasedWithCompileTimeConnections<Event::MeasurementInterval,
-                                                  decltype(collector)>
-        measurement_interval_signal{collector};
-    SignalStdTupleBasedWithCompileTimeConnections<Event::SendingInterval,
-                                                  decltype(collector)>
-        sending_interval_signal{collector};
+    Collector<Measurement, Package, Store_, Measurer, decltype(sender_decorator)> collector{
+        store, measurer, sender_decorator};
 
-    SignalDecorator<Event::MeasurementInterval,
-                    decltype(measurement_interval_signal)>
-        measurement_interval_signal_decorator{measurement_interval_signal};
+    Signal<Event::MeasurementInterval, decltype(collector)> measurement_interval_signal{collector};
+    Signal<Event::SendingInterval, decltype(collector)> sending_interval_signal{collector};
 
-    SignalDecorator2<Event::MeasurementInterval,
-                     SignalStdTupleBasedWithCompileTimeConnections<
-                         Event::MeasurementInterval, decltype(collector)>>
-        measurement_interval_signal_decorator2{collector};
-    measurement_interval_signal_decorator2.notify({});
+    auto active{make_active_with_compile_time_actors<Thread, MessagePump>(
+        [&](Event::MeasurementInterval e) { measurement_interval_signal.notify(e); },
+        [&](Package p) { sender.send(p); })};
 
-    std::cout << "=============================" << std::endl;
-
-    for (unsigned i{0}; i < 10; ++i) {
-        measurement_interval_signal_decorator.notify({});
-        if (i % 3 == 0) sending_interval_signal.notify({});
+    for (unsigned i{0}; i < 10; ++i)
+    {
+        active.send(Event::MeasurementInterval{});
+        if (i % 3 == 0)
+            sending_interval_signal.notify({});
     }
 
     return 0;

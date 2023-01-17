@@ -34,8 +34,10 @@ static inline constexpr unsigned get_index(const std::tuple<U, Us...>&)
 }
 } // namespace detail
 
-// FIXME: Thread must be also a template, with a start() function that takes a lambda.
-template<typename Thread, template<typename> typename MessagePumpTemplate, typename... Actors>
+template<template<auto Method> typename ThreadTemplate,
+         template<typename>
+         typename MessagePumpTemplate,
+         typename... Actors>
 class Active
 {
   public:
@@ -58,7 +60,7 @@ class Active
     template<typename... Ts>
     explicit Active(Ts&&... as) : actors{std::forward<Ts>(as)...}
     {
-        thread.start([&]() { run(); });
+        thread.start(this);
     }
 
     ~Active()
@@ -101,16 +103,18 @@ class Active
         }
     }
 
+    using Thread = ThreadTemplate<&Active::run>;
+
     bool done{false};
     MessagePump message_pump;
     Thread thread;
     const std::tuple<Actors...> actors;
 };
 
-template<typename Thread, template<typename> typename MessagePumpTemplate, typename... Actors>
+template<template<auto> typename ThreadTemplate, template<typename> typename MessagePumpTemplate, typename... Actors>
 inline auto make_active_with_compile_time_actors(Actors&&... actors)
 {
-    return Active<Thread, MessagePumpTemplate, Actors...>(std::forward<Actors>(actors)...);
+    return Active<ThreadTemplate, MessagePumpTemplate, Actors...>(std::forward<Actors>(actors)...);
 }
 
 #endif /* ACTIVE_WITH_COMPILE_TIME_ACTORS_HPP */
