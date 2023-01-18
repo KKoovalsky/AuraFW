@@ -9,6 +9,7 @@
 #include "app/basic_array_store.hpp"
 #include "collector_using_static_polymorphizm.hpp"
 #include "events.hpp"
+#include "native_timer.hpp"
 #include "utils/active_with_compile_time_actors_parted.hpp"
 #include "utils/signal_std_tuple_based_with_compile_time_connections.hpp"
 
@@ -62,6 +63,8 @@ using Collector = CollectorWhichUsesStaticPolymporphizm<Measurement, Package, St
 // FIXME: Package shall be SendPackage
 using Dispatcher_ = Dispatcher<MessagePump, Event::MeasurementInterval, Event::SendingInterval, Package>;
 
+using namespace std::chrono_literals;
+
 struct SenderDecorator
 {
     explicit SenderDecorator(Dispatcher_& dispatcher) : dispatcher{dispatcher}
@@ -73,6 +76,22 @@ struct SenderDecorator
         dispatcher.send(std::move(package));
     }
 
+    Dispatcher_& dispatcher;
+};
+
+template<typename Event>
+struct EventNotifier
+{
+    explicit EventNotifier(Dispatcher_& d) : dispatcher{d}
+    {
+    }
+
+    void notify()
+    {
+        dispatcher.send(Event{});
+    }
+
+  private:
     Dispatcher_& dispatcher;
 };
 
@@ -96,12 +115,14 @@ int main()
                                        [&](Event::SendingInterval&& e) { sending_interval_signal.notify(e); },
                                        [&](Package&& p) { sender.send(p); })};
 
-    for (unsigned i{0}; i < 10; ++i)
-    {
-        dispatcher.send(Event::MeasurementInterval{});
-        if (i % 3 == 0)
-            dispatcher.send(Event::SendingInterval{});
-    }
+    EventNotifier<Event::MeasurementInterval> measurement_interval_notifier{dispatcher};
+    EventNotifier<Event::SendingInterval> sending_interval_notifier{dispatcher};
+
+    concurrencpp::runtime runtime;
+    NativeTimer measurement_timer{measurement_interval_notifier, runtime, 100ms};
+    NativeTimer sending_timer{sending_interval_notifier, runtime, 300ms};
+
+    std::this_thread::sleep_for(2s);
 
     return 0;
 }

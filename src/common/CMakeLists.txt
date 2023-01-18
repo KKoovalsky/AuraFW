@@ -1,3 +1,5 @@
+ProvideConcurrencpp()
+
 add_library(aura_common INTERFACE)
 target_include_directories(aura_common INTERFACE ${CMAKE_CURRENT_LIST_DIR})
 
@@ -13,4 +15,4 @@ target_link_libraries(aura_simulation_with_static_polymorphism_with_crtp aura_co
 add_executable(aura_simulation_with_static_polymorphism_and_parted_active
     ./app_simulation_with_static_polymorphism_and_parted_active.cpp)
 target_link_libraries(aura_simulation_with_static_polymorphism_and_parted_active
-    aura_common jungles::os_helpers)
+    aura_common jungles::os_helpers concurrencpp::concurrencpp)

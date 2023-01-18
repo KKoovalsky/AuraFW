@@ -117,6 +117,12 @@ function(ProvidePrintfLibrary)
 
 endfunction()
 
+function(ProvideConcurrencpp)
+
+    find_package(concurrencpp)
+
+endfunction()
+
 
 set(PROJECT_ROOT_FOR_DEPENDENCIES_CMAKE ${CMAKE_CURRENT_LIST_DIR}/..)
 set(DEPENDENCIES_DIR_FOR_DEPENDENCIES_CMAKE ${PROJECT_ROOT_FOR_DEPENDENCIES_CMAKE}/.deps)
