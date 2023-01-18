@@ -110,17 +110,17 @@ int main()
     Signal<Event::MeasurementInterval, decltype(collector)> measurement_interval_signal{collector};
     Signal<Event::SendingInterval, decltype(collector)> sending_interval_signal{collector};
 
-    auto active{
-        dispatcher.make_active<Thread>([&](Event::MeasurementInterval&& e) { measurement_interval_signal.notify(e); },
-                                       [&](Event::SendingInterval&& e) { sending_interval_signal.notify(e); },
-                                       [&](Package&& p) { sender.send(p); })};
-
     EventNotifier<Event::MeasurementInterval> measurement_interval_notifier{dispatcher};
     EventNotifier<Event::SendingInterval> sending_interval_notifier{dispatcher};
 
     concurrencpp::runtime runtime;
     NativeTimer measurement_timer{measurement_interval_notifier, runtime, 100ms};
     NativeTimer sending_timer{sending_interval_notifier, runtime, 300ms};
+
+    auto active{
+        dispatcher.make_active<Thread>([&](Event::MeasurementInterval&& e) { measurement_interval_signal.notify(e); },
+                                       [&](Event::SendingInterval&& e) { sending_interval_signal.notify(e); },
+                                       [&](Package&& p) { sender.send(p); })};
 
     std::this_thread::sleep_for(2s);
 
