@@ -5,6 +5,8 @@
 #ifndef ACTIVE_WITH_COMPILE_TIME_ACTORS_PARTED_HPP
 #define ACTIVE_WITH_COMPILE_TIME_ACTORS_PARTED_HPP
 
+#include <optional>
+#include <utility>
 #include <variant>
 
 #include "utils/function_traits.hpp"
@@ -46,6 +48,7 @@ struct Active
 
   private:
     using Done = typename Proxy::Done;
+    using Message = typename Proxy::Message;
     using MessageTypes = typename Proxy::MessageTypes;
 
   public:
@@ -64,9 +67,7 @@ struct Active
   private:
     void run()
     {
-        while (!done)
-        {
-            auto msg{message_pump.receive()};
+        auto handle{[&](auto&& msg) {
             std::visit(
                 [&](auto&& arg) {
                     using T = std::decay_t<decltype(arg)>;
@@ -80,8 +81,19 @@ struct Active
                         actor(std::forward<decltype(arg)>(arg));
                     }
                 },
-                std::move(msg));
+                std::forward<decltype(msg)>(msg));
+        }};
+
+        while (!done)
+        {
+            auto msg{message_pump.receive()};
+            handle(std::move(msg));
         }
+
+        // There might be some messages received after quit message (Done{}) is received. We have to handle them.
+        std::optional<Message> maybe_msg;
+        while ((maybe_msg = message_pump.receive_immediate()))
+            handle(std::move(*maybe_msg));
     }
 
     using Thread = ThreadTemplate<&Active::run>;
