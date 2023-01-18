@@ -22,6 +22,7 @@ include(static_code_analysis)
 ProvideJunglesOsHelpers()
 
 add_subdirectory(../common common)
+add_subdirectory(../dynamic dynamic)
 
 enable_testing()
 add_subdirectory(../../tests/host tests/host)
