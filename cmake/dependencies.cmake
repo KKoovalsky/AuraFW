@@ -88,7 +88,7 @@ function(ProvideJunglesOsHelpers)
     include(FetchContent)
     FetchContent_Declare(JunglesOsHelpers
         GIT_REPOSITORY https://github.com/KKoovalsky/JunglesOsHelpers.git
-        GIT_TAG        d39856d3886ee467dc7e88f0a54ad3ef880099bb
+        GIT_TAG        b561cf3235f130d0376ccf75c6e4188738070b5c
         SOURCE_DIR     ${DEPENDENCIES_DIR_FOR_DEPENDENCIES_CMAKE}/junglesoshelpers-src
     )
 
