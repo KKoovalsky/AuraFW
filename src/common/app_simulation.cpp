@@ -48,9 +48,9 @@ struct Sender
 };
 
 template<typename Sender>
-struct SenderDecorator
+struct SenderDecoratorDynamicLike
 {
-    explicit SenderDecorator(Sender& sender) : sender{sender}
+    explicit SenderDecoratorDynamicLike(Sender& sender) : sender{sender}
     {
     }
 
@@ -61,22 +61,6 @@ struct SenderDecorator
     }
 
     Sender& sender;
-};
-
-template<typename Sender>
-struct SenderDecorator2
-{
-    explicit SenderDecorator2(Sender&& s) : sender{std::move(s)}
-    {
-    }
-
-    void send(Package&& package)
-    {
-        std::cout << "DECORATED2 SENDER" << std::endl;
-        sender.send(std::move(package));
-    }
-
-    Sender sender;
 };
 
 template<typename Event, typename Signal>
@@ -135,7 +119,7 @@ int main()
     Measurer measurer;
     Sender sender;
 
-    SenderDecorator2 sender_decorator{Sender{}};
+    SenderDecoratorDynamicLike sender_decorator{sender};
 
     Collector<Measurement, Package, Store_, Measurer, decltype(sender_decorator)> collector{
         store, measurer, sender_decorator};
