@@ -79,10 +79,10 @@ struct SenderDecorator
     Dispatcher_& dispatcher;
 };
 
-template<typename Event>
+template<typename Event, typename Dispatcher>
 struct EventNotifier
 {
-    explicit EventNotifier(Dispatcher_& d) : dispatcher{d}
+    explicit EventNotifier(Dispatcher& d) : dispatcher{d}
     {
     }
 
@@ -92,7 +92,7 @@ struct EventNotifier
     }
 
   private:
-    Dispatcher_& dispatcher;
+    Dispatcher& dispatcher;
 };
 
 int main()
@@ -110,8 +110,8 @@ int main()
     Signal<Event::MeasurementInterval, decltype(collector)> measurement_interval_signal{collector};
     Signal<Event::SendingInterval, decltype(collector)> sending_interval_signal{collector};
 
-    EventNotifier<Event::MeasurementInterval> measurement_interval_notifier{dispatcher};
-    EventNotifier<Event::SendingInterval> sending_interval_notifier{dispatcher};
+    EventNotifier<Event::MeasurementInterval, Dispatcher_> measurement_interval_notifier{dispatcher};
+    EventNotifier<Event::SendingInterval, Dispatcher_> sending_interval_notifier{dispatcher};
 
     concurrencpp::runtime runtime;
     NativeTimer measurement_timer{measurement_interval_notifier, runtime, 100ms};
