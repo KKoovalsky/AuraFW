@@ -16,3 +16,8 @@ add_executable(aura_simulation_with_static_polymorphism_and_parted_active
     ./app_simulation_with_static_polymorphism_and_parted_active.cpp)
 target_link_libraries(aura_simulation_with_static_polymorphism_and_parted_active
     aura_common jungles::os_helpers concurrencpp::concurrencpp)
+
+add_executable(app_simulation_with_static_polymorphism_and_active_using_method_pointers
+    ./app_simulation_with_static_polymorphism_and_active_using_method_pointers.cpp)
+target_link_libraries(app_simulation_with_static_polymorphism_and_active_using_method_pointers
+    aura_common jungles::os_helpers concurrencpp::concurrencpp)
